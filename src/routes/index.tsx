@@ -14,8 +14,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Evovi — Giải pháp phần mềm thiết kế riêng cho doanh nghiệp" },
       { name: "description", content: "Evovi cung cấp giải pháp phần mềm theo yêu cầu: tư vấn, thiết kế, phát triển web/app, tích hợp API và tối ưu hệ thống cho doanh nghiệp." },
-      { property: "og:title", content: "Evovi — Custom Software Solutions" },
-      { property: "og:description", content: "Giải pháp phần mềm được thiết kế riêng cho doanh nghiệp của bạn." },
+      { property: "og:title", content: "Evovi — Phần mềm thiết kế riêng cho doanh nghiệp" },
+      { property: "og:description", content: "Giải pháp phần mềm theo yêu cầu, dễ dùng, dễ mở rộng, phù hợp đúng cách bạn đang vận hành." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -64,20 +64,20 @@ function Hero() {
       <div className="container-x relative grid lg:grid-cols-2 gap-12 items-center">
         <div className="animate-fade-up">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium backdrop-blur">
-            <Sparkles className="w-3.5 h-3.5" /> Custom Software Solutions
+            <Sparkles className="w-3.5 h-3.5" /> Phần mềm thiết kế riêng cho doanh nghiệp
           </span>
           <h1 className="mt-6 font-display text-4xl md:text-6xl font-bold leading-[1.05]">
             Giải pháp phần mềm <span className="bg-gradient-to-r from-white to-primary-glow bg-clip-text text-transparent">thiết kế riêng</span> cho doanh nghiệp của bạn
           </h1>
           <p className="mt-6 text-lg text-white/75 max-w-xl">
-            Evovi giúp bạn giải quyết bài toán vận hành bằng công nghệ tối ưu, phù hợp và dễ mở rộng — không chỉ là code, mà là tư duy business-first.
+            Evovi giúp bạn làm việc nhanh hơn, quản lý gọn hơn, dữ liệu rõ ràng hơn. Bạn chỉ cần nói “đang vướng ở đâu” — tụi mình sẽ cùng bạn chốt cách làm đơn giản và hiệu quả.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a href="#contact" className="inline-flex items-center gap-2 rounded-full bg-white text-primary px-6 py-3 font-semibold shadow-elegant hover:shadow-glow transition-all">
               Nhận tư vấn miễn phí <ArrowRight className="w-4 h-4" />
             </a>
             <a href="#services" className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 font-semibold hover:bg-white/10 transition-all">
-              Xem giải pháp
+              Xem dịch vụ
             </a>
           </div>
           <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
@@ -106,10 +106,10 @@ function Hero() {
 
 function PainPoints() {
   const items = [
-    { icon: AlertTriangle, t: "Phần mềm không phù hợp", d: "Quy trình bị ép theo template, gây lãng phí và khó vận hành." },
-    { icon: Workflow, t: "Quản lý thủ công", d: "Dữ liệu rời rạc, thiếu đồng bộ giữa các phòng ban." },
-    { icon: Settings2, t: "Hệ thống cũ kỹ", d: "Tốc độ chậm, khó mở rộng, chi phí bảo trì ngày càng tăng." },
-    { icon: Shield, t: "Thiếu bảo mật & sao lưu", d: "Rủi ro mất dữ liệu, gián đoạn vận hành nghiêm trọng." },
+    { icon: AlertTriangle, t: "Phần mềm không khớp cách làm việc", d: "Dùng phải “mẫu có sẵn” nên làm vòng vèo, tốn thời gian." },
+    { icon: Workflow, t: "Nhiều file, nhiều nhóm chat", d: "Dữ liệu nằm rải rác, khó tổng hợp và dễ sai." },
+    { icon: Settings2, t: "Hệ thống cũ chậm và hay lỗi", d: "Càng dùng càng ì, sửa mãi không dứt." },
+    { icon: Shield, t: "Lo mất dữ liệu", d: "Thiếu sao lưu/bảo mật rõ ràng nên rủi ro cao." },
   ];
   return (
     <section className="py-24 bg-background">
@@ -117,7 +117,7 @@ function PainPoints() {
         <div className="max-w-2xl">
           <span className="text-sm font-semibold text-primary uppercase tracking-wider">Vấn đề thường gặp</span>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold">Doanh nghiệp đang gặp khó khăn vì đâu?</h2>
-          <p className="mt-4 text-muted-foreground">Phần lớn vấn đề vận hành đến từ công nghệ chưa phù hợp với mô hình kinh doanh thực tế.</p>
+          <p className="mt-4 text-muted-foreground">Đa số không phải vì bạn “làm sai”, mà vì công cụ hiện tại chưa đúng với cách đội ngũ đang vận hành.</p>
         </div>
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {items.map((it, i) => (
@@ -137,9 +137,9 @@ function PainPoints() {
 
 function Solution() {
   const steps = [
-    { icon: Search, t: "Phân tích nhu cầu thực tế", d: "Hiểu sâu mô hình kinh doanh, quy trình và mục tiêu tăng trưởng." },
-    { icon: PenTool, t: "Thiết kế hệ thống phù hợp", d: "Kiến trúc mở, dễ mở rộng, tối ưu chi phí vận hành dài hạn." },
-    { icon: Rocket, t: "Phát triển linh hoạt", d: "Triển khai theo sprint, ra mắt nhanh, cập nhật liên tục theo phản hồi." },
+    { icon: Search, t: "Hiểu đúng nhu cầu", d: "Ngồi cùng bạn để hiểu quy trình, điểm nghẽn và mục tiêu." },
+    { icon: PenTool, t: "Đề xuất cách làm dễ dùng", d: "Thiết kế màn hình & luồng thao tác rõ ràng, ai cũng dùng được." },
+    { icon: Rocket, t: "Làm nhanh, ra bản dùng sớm", d: "Chia nhỏ theo từng đợt, có bản chạy được sớm để thử và chỉnh." },
   ];
   return (
     <section id="solution" className="py-24 relative overflow-hidden" style={{ background: "var(--gradient-soft)" }}>
@@ -147,7 +147,7 @@ function Solution() {
         <div>
           <span className="text-sm font-semibold text-primary uppercase tracking-wider">Cách Evovi giải quyết</span>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold">Từ bài toán kinh doanh đến giải pháp công nghệ</h2>
-          <p className="mt-4 text-muted-foreground">Chúng tôi không bán phần mềm có sẵn. Chúng tôi thiết kế giải pháp đúng với "DNA" doanh nghiệp của bạn.</p>
+          <p className="mt-4 text-muted-foreground">Evovi không bán “phần mềm đóng gói”. Tụi mình làm theo đúng cách bạn đang vận hành — đơn giản, rõ ràng và có thể mở rộng khi doanh nghiệp lớn lên.</p>
           <div className="mt-8 space-y-5">
             {steps.map((s, i) => (
               <div key={i} className="flex gap-4 p-5 rounded-xl bg-card border border-border shadow-card-soft">
@@ -167,10 +167,10 @@ function Solution() {
             <div className="absolute inset-0 bg-primary-gradient rounded-[3rem] rotate-6 opacity-20 blur-2xl" />
             <div className="relative h-full rounded-[2.5rem] bg-card border border-border shadow-elegant p-8 flex flex-col justify-between">
               {[
-                { icon: Lightbulb, label: "Discovery", c: "from-blue-500 to-indigo-500" },
-                { icon: Layers, label: "Architecture", c: "from-indigo-500 to-purple-500" },
-                { icon: Code2, label: "Development", c: "from-purple-500 to-pink-500" },
-                { icon: Zap, label: "Launch & Scale", c: "from-pink-500 to-orange-400" },
+                { icon: Lightbulb, label: "Khảo sát nhu cầu", c: "from-blue-500 to-indigo-500" },
+                { icon: Layers, label: "Thiết kế giải pháp", c: "from-indigo-500 to-purple-500" },
+                { icon: Code2, label: "Xây dựng & kiểm thử", c: "from-purple-500 to-pink-500" },
+                { icon: Zap, label: "Triển khai & tối ưu", c: "from-pink-500 to-orange-400" },
               ].map((b, i) => (
                 <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-accent/50">
                   <div className={`w-10 h-10 grid place-items-center rounded-lg bg-gradient-to-br ${b.c} text-white`}>
@@ -190,12 +190,12 @@ function Solution() {
 
 function Services() {
   const services = [
-    { icon: Lightbulb, t: "Tư vấn phần mềm", d: "Phân tích nghiệp vụ, đề xuất giải pháp công nghệ tối ưu." },
-    { icon: Code2, t: "Phát triển Web / App", d: "Sản phẩm custom theo yêu cầu, hiệu năng cao, UX hiện đại." },
-    { icon: Layers, t: "Thiết kế hệ thống", d: "Kiến trúc microservices, scalable, sẵn sàng mở rộng." },
-    { icon: Plug, t: "Tích hợp API", d: "Kết nối ERP, CRM, payment, third-party services mượt mà." },
-    { icon: Wrench, t: "Bảo trì & nâng cấp", d: "Tối ưu hệ thống cũ, vá lỗi, refactor và tăng hiệu suất." },
-    { icon: Shield, t: "DevOps & Bảo mật", d: "CI/CD, monitoring, bảo mật chuẩn doanh nghiệp." },
+    { icon: Lightbulb, t: "Tư vấn & lên phương án", d: "Cùng bạn gỡ rối quy trình và chọn cách làm phù hợp nhất." },
+    { icon: Code2, t: "Làm web / app theo yêu cầu", d: "Giao diện rõ ràng, dùng dễ, chạy mượt." },
+    { icon: Layers, t: "Thiết kế hệ thống", d: "Sắp xếp dữ liệu & luồng xử lý gọn gàng để mở rộng về sau." },
+    { icon: Plug, t: "Kết nối hệ thống đang có", d: "Đồng bộ dữ liệu giữa các công cụ (CRM/ERP/thanh toán…)."},
+    { icon: Wrench, t: "Nâng cấp hệ thống cũ", d: "Sửa chậm/lỗi, tối ưu lại để ổn định và dễ bảo trì." },
+    { icon: Shield, t: "Bảo mật & vận hành", d: "Thiết lập sao lưu, phân quyền, theo dõi hệ thống để yên tâm." },
   ];
   return (
     <section id="services" className="py-24 bg-background">
@@ -215,7 +215,7 @@ function Services() {
               <h3 className="mt-5 font-semibold text-lg">{s.t}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
               <div className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                Tìm hiểu <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Xem chi tiết <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           ))}
@@ -263,21 +263,21 @@ function Process() {
 function CaseStudies() {
   const cases = [
     {
-      tag: "ERP Manufacturing",
+      tag: "Quản lý sản xuất",
       t: "Tự động hoá vận hành nhà máy 500+ nhân sự",
       problem: "Quản lý sản xuất rời rạc trên Excel, sai sót cao.",
       result: "Giảm 60% thao tác thủ công, tăng 35% hiệu suất.",
       stats: [["−60%","Thao tác"],["+35%","Hiệu suất"],["3 tháng","Triển khai"]],
     },
     {
-      tag: "Fintech Platform",
+      tag: "Thanh toán",
       t: "Nền tảng thanh toán cho startup tăng trưởng nhanh",
       problem: "Hệ thống cũ không scale, downtime cao mùa cao điểm.",
       result: "Xử lý 1M+ giao dịch/ngày, uptime 99.99%.",
       stats: [["1M+","Tx/ngày"],["99.99%","Uptime"],["−45%","Cost"]],
     },
     {
-      tag: "Retail CRM",
+      tag: "Chăm sóc khách hàng",
       t: "Tích hợp CRM đa kênh cho chuỗi 80 cửa hàng",
       problem: "Dữ liệu khách hàng phân mảnh giữa các kênh.",
       result: "Tăng 28% repeat-rate nhờ insight thống nhất.",
@@ -289,7 +289,7 @@ function CaseStudies() {
       <div className="container-x">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="max-w-xl">
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Case Studies</span>
+            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Dự án tiêu biểu</span>
             <h2 className="mt-3 text-3xl md:text-4xl font-bold">Kết quả thực tế, đo lường được</h2>
           </div>
           <p className="text-muted-foreground max-w-md">Một vài dự án tiêu biểu Evovi đã đồng hành cùng khách hàng.</p>
@@ -321,12 +321,12 @@ function CaseStudies() {
 
 function WhyEvovi() {
   const items = [
-    { icon: Cog, t: "Custom 100%", d: "Không template cứng — mọi thứ thiết kế riêng." },
-    { icon: TrendingUp, t: "Tối ưu chi phí", d: "Kiến trúc gọn, scale theo nhu cầu thật." },
-    { icon: Clock, t: "Triển khai nhanh", d: "Sprint ngắn, ra mắt sớm, cải tiến liên tục." },
-    { icon: LifeBuoy, t: "Hỗ trợ dài hạn", d: "Đồng hành sau go-live, không bỏ rơi sản phẩm." },
-    { icon: Shield, t: "Bảo mật chuẩn", d: "Tuân thủ best-practices về security & compliance." },
-    { icon: CheckCircle2, t: "Cam kết kết quả", d: "KPI rõ ràng, minh bạch tiến độ từng giai đoạn." },
+    { icon: Cog, t: "Làm theo đúng nhu cầu", d: "Không ép bạn theo khuôn mẫu có sẵn." },
+    { icon: TrendingUp, t: "Chi phí hợp lý", d: "Làm đúng phần cần làm trước, mở rộng sau." },
+    { icon: Clock, t: "Có bản dùng sớm", d: "Ra bản chạy được sớm để thử ngay." },
+    { icon: LifeBuoy, t: "Có người hỗ trợ", d: "Sau khi chạy thật vẫn có đội ngũ đồng hành." },
+    { icon: Shield, t: "An toàn dữ liệu", d: "Phân quyền, sao lưu, theo dõi hệ thống rõ ràng." },
+    { icon: CheckCircle2, t: "Minh bạch tiến độ", d: "Mỗi giai đoạn đều rõ việc – rõ thời gian – rõ kết quả." },
   ];
   return (
     <section className="py-24 bg-hero-gradient text-white relative overflow-hidden">
@@ -399,7 +399,7 @@ function ContactCTA() {
           <div className="relative grid lg:grid-cols-2 gap-12">
             <div>
               <h2 className="text-3xl md:text-5xl font-bold leading-tight">Đặt lịch tư vấn ngay hôm nay</h2>
-              <p className="mt-5 text-white/75 max-w-md">Trao đổi 30 phút miễn phí với chuyên gia Evovi để định hình giải pháp phù hợp.</p>
+              <p className="mt-5 text-white/75 max-w-md">Bạn không cần biết kỹ thuật. Chỉ cần mô tả vấn đề đang gặp — Evovi sẽ gợi ý hướng làm rõ ràng và dễ triển khai.</p>
               <div className="mt-8 space-y-4 text-sm">
                 <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-primary-glow" /> hello@evovi.io</div>
                 <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-primary-glow" /> +84 909 000 000</div>
@@ -414,7 +414,7 @@ function ContactCTA() {
                 <div className="text-center py-10">
                   <CheckCircle2 className="w-14 h-14 mx-auto text-primary-glow" />
                   <h3 className="mt-4 text-xl font-semibold">Đã gửi thành công!</h3>
-                  <p className="mt-2 text-white/70 text-sm">Evovi sẽ liên hệ với bạn trong vòng 24 giờ.</p>
+                  <p className="mt-2 text-white/70 text-sm">Evovi sẽ liên hệ sớm để hẹn lịch trao đổi.</p>
                 </div>
               ) : (
                 <>
@@ -446,11 +446,11 @@ function ContactCTA() {
                   </div>
                   <div>
                     <label className="block text-xs font-medium mb-1.5 text-white/80">Nhu cầu</label>
-                    <textarea required rows={3} name="need" maxLength={1000} placeholder="Mô tả ngắn gọn dự án của bạn..."
+                    <textarea required rows={3} name="need" maxLength={1000} placeholder="Bạn đang gặp vấn đề gì? Ví dụ: quản lý đơn hàng, quản lý kho, báo cáo, chăm sóc khách hàng..."
                       className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-primary-glow focus:bg-white/15 transition resize-none" />
                   </div>
                   <button type="submit" className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white text-primary px-6 py-3.5 font-semibold hover:shadow-glow transition-all">
-                    Gửi yêu cầu tư vấn <ArrowRight className="w-4 h-4" />
+                    Gửi thông tin để được gọi lại <ArrowRight className="w-4 h-4" />
                   </button>
                 </>
               )}
@@ -491,7 +491,7 @@ function Footer() {
         </div>
       </div>
       <div className="container-x mt-10 pt-6 border-t border-background/10 text-xs flex flex-col md:flex-row justify-between gap-3">
-        <span>© {new Date().getFullYear()} Evovi. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Evovi. Bảo lưu mọi quyền.</span>
       </div>
     </footer>
   );

@@ -401,8 +401,8 @@ function ContactCTA() {
               <h2 className="text-3xl md:text-5xl font-bold leading-tight">Đặt lịch tư vấn ngay hôm nay</h2>
               <p className="mt-5 text-white/75 max-w-md">Bạn không cần biết kỹ thuật. Chỉ cần mô tả vấn đề đang gặp — Evovi sẽ gợi ý hướng làm rõ ràng và dễ triển khai.</p>
               <div className="mt-8 space-y-4 text-sm">
-                <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-primary-glow" /> hello@evovi.io</div>
-                <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-primary-glow" /> +84 909 000 000</div>
+                <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-primary-glow" /> admin@evovi.vn</div>
+                <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-primary-glow" /> 0559726689</div>
                 <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-primary-glow" /> Hà Nội · TP. Hồ Chí Minh</div>
               </div>
             </div>
@@ -484,8 +484,8 @@ function Footer() {
         <div>
           <h4 className="text-background font-semibold mb-4">Liên hệ</h4>
           <ul className="space-y-2 text-sm">
-            <li>hello@evovi.io</li>
-            <li>+84 909 000 000</li>
+            <li>admin@evovi.vn</li>
+            <li>0559726689</li>
             <li>Hà Nội · TP. HCM</li>
           </ul>
         </div>

@@ -16,5 +16,6 @@ RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/scripts ./scripts
 
-EXPOSE 3000
+ENV PORT=80
+EXPOSE 80
 CMD ["npm", "run", "start"]

@@ -8,10 +8,13 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM caddy:2-alpine
+FROM node:20-alpine
 
-COPY --from=build /app/dist /usr/share/caddy
-COPY Caddyfile /etc/caddy/Caddyfile
+WORKDIR /app
+COPY --from=build /app/package*.json ./
+RUN npm ci --omit=dev
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/scripts ./scripts
 
-EXPOSE 80
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+EXPOSE 3000
+CMD ["npm", "run", "start"]

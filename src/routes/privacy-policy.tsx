@@ -1,5 +1,13 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Mail, Globe, Building2 } from "lucide-react";
+import { Mail, Globe, Building2, Phone } from "lucide-react";
+import { EvoviLogoIcon } from "@/components/EvoviLogoIcon";
+
+const CONTACT = {
+  company: "Evovi",
+  hotline: "0868661235",
+  email: "kinhdoanh@evovi.vn",
+  website: "https://evovi.vn",
+} as const;
 
 export const Route = createFileRoute("/privacy-policy")({
   head: () => ({
@@ -108,13 +116,21 @@ const SECTIONS = [
 function PrivacyHeader() {
   return (
     <header className="border-b border-border bg-card/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-[900px] items-center px-5 md:px-8">
+      <div className="mx-auto flex h-16 max-w-[900px] items-center justify-between gap-4 px-5 md:px-8">
         <Link
           to="/privacy-policy"
           className="font-display text-xl font-bold tracking-tight text-gradient"
         >
           Elevator360
         </Link>
+        <a
+          href={CONTACT.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 rounded-lg transition-opacity hover:opacity-80"
+        >
+          <EvoviLogoIcon size="md" />
+        </a>
       </div>
     </header>
   );
@@ -124,33 +140,48 @@ function PrivacyFooter() {
   return (
     <footer className="border-t border-border bg-muted/40">
       <div className="mx-auto max-w-[900px] px-5 py-10 md:px-8">
-        <p className="text-sm font-semibold text-foreground">Evovi</p>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <EvoviLogoIcon size="lg" />
+        <p className="mt-4 text-sm text-muted-foreground">
           Giải pháp phần mềm cho doanh nghiệp trong lĩnh vực thang máy.
         </p>
         <ul className="mt-5 space-y-2.5 text-sm text-muted-foreground">
           <li className="flex items-center gap-2.5">
             <Building2 className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-            <span>Công ty: Evovi</span>
+            <span>Công ty: {CONTACT.company}</span>
+          </li>
+          <li className="flex items-center gap-2.5">
+            <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+            <span>
+              Hotline 24/7:{" "}
+              <a
+                href={`tel:${CONTACT.hotline}`}
+                className="text-foreground underline-offset-4 hover:text-primary hover:underline"
+              >
+                {CONTACT.hotline}
+              </a>
+            </span>
           </li>
           <li className="flex items-center gap-2.5">
             <Mail className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-            <a
-              href="mailto:admin@evovi.vn"
-              className="text-foreground underline-offset-4 hover:text-primary hover:underline"
-            >
-              admin@evovi.vn
-            </a>
+            <span>
+              Email:{" "}
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="text-foreground underline-offset-4 hover:text-primary hover:underline"
+              >
+                {CONTACT.email}
+              </a>
+            </span>
           </li>
           <li className="flex items-center gap-2.5">
             <Globe className="h-4 w-4 shrink-0 text-primary" aria-hidden />
             <a
-              href="https://evovi.vn"
+              href={CONTACT.website}
               target="_blank"
               rel="noopener noreferrer"
               className="text-foreground underline-offset-4 hover:text-primary hover:underline"
             >
-              https://evovi.vn
+              {CONTACT.website}
             </a>
           </li>
         </ul>
@@ -224,17 +255,28 @@ function PrivacyPolicyPage() {
                         <span className="font-medium text-foreground">
                           Công ty:
                         </span>{" "}
-                        Evovi
+                        {CONTACT.company}
+                      </li>
+                      <li>
+                        <span className="font-medium text-foreground">
+                          Hotline 24/7:
+                        </span>{" "}
+                        <a
+                          href={`tel:${CONTACT.hotline}`}
+                          className="text-primary underline-offset-4 hover:underline"
+                        >
+                          {CONTACT.hotline}
+                        </a>
                       </li>
                       <li>
                         <span className="font-medium text-foreground">
                           Email:
                         </span>{" "}
                         <a
-                          href="mailto:admin@evovi.vn"
+                          href={`mailto:${CONTACT.email}`}
                           className="text-primary underline-offset-4 hover:underline"
                         >
-                          admin@evovi.vn
+                          {CONTACT.email}
                         </a>
                       </li>
                       <li>
@@ -242,12 +284,12 @@ function PrivacyPolicyPage() {
                           Website:
                         </span>{" "}
                         <a
-                          href="https://evovi.vn"
+                          href={CONTACT.website}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary underline-offset-4 hover:underline"
                         >
-                          https://evovi.vn
+                          {CONTACT.website}
                         </a>
                       </li>
                     </ul>

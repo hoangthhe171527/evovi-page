@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import heroImg from "@/assets/hero-dashboard.jpg";
-import logo from "@/assets/evovi-logo.png";
+import { EvoviLogoIcon } from "@/components/EvoviLogoIcon";
 import {
   ArrowRight, Sparkles, Code2, Layers, Plug, Wrench, Lightbulb,
   AlertTriangle, Workflow, Settings2, CheckCircle2, Zap, Shield,
@@ -37,9 +37,8 @@ function Navbar() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/60">
       <div className="container-x flex h-16 items-center justify-between">
-        <a href="#" className="flex items-center gap-2 font-display font-bold text-lg">
-          <img src={logo} alt="Evovi" width={32} height={32} className="w-8 h-8 object-contain drop-shadow-[0_0_12px_oklch(0.62_0.22_285/0.5)]" />
-          <span className="text-gradient">Evovi</span>
+        <a href="#" className="flex items-center rounded-lg drop-shadow-[0_0_12px_oklch(0.62_0.22_285/0.35)]" aria-label="Evovi">
+          <EvoviLogoIcon size="sm" />
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
           {links.map(l => (
@@ -401,8 +400,14 @@ function ContactCTA() {
               <h2 className="text-3xl md:text-5xl font-bold leading-tight">Đặt lịch tư vấn ngay hôm nay</h2>
               <p className="mt-5 text-white/75 max-w-md">Bạn không cần biết kỹ thuật. Chỉ cần mô tả vấn đề đang gặp — Evovi sẽ gợi ý hướng làm rõ ràng và dễ triển khai.</p>
               <div className="mt-8 space-y-4 text-sm">
-                <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-primary-glow" /> admin@evovi.vn</div>
-                <div className="flex items-center gap-3"><Phone className="w-4 h-4 text-primary-glow" /> 0559726689</div>
+                <div className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-primary-glow shrink-0" />
+                  <a href="mailto:kinhdoanh@evovi.vn" className="hover:text-white transition-colors">kinhdoanh@evovi.vn</a>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="w-4 h-4 text-primary-glow shrink-0" />
+                  <span>Hotline 24/7: <a href="tel:0868661235" className="hover:text-white transition-colors">0868661235</a></span>
+                </div>
                 <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-primary-glow" /> Hà Nội · TP. Hồ Chí Minh</div>
               </div>
             </div>
@@ -467,9 +472,8 @@ function Footer() {
     <footer className="bg-foreground text-background/80 py-14">
       <div className="container-x grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
-          <div className="flex items-center gap-2 font-display font-bold text-xl text-background">
-            <img src={logo} alt="Evovi" width={32} height={32} loading="lazy" className="w-8 h-8 object-contain" />
-            Evovi
+          <div className="flex items-center">
+            <EvoviLogoIcon size="md" />
           </div>
           <p className="mt-4 text-sm max-w-sm">Giải pháp phần mềm thiết kế riêng, giúp doanh nghiệp tăng trưởng bền vững bằng công nghệ.</p>
         </div>
@@ -484,8 +488,13 @@ function Footer() {
         <div>
           <h4 className="text-background font-semibold mb-4">Liên hệ</h4>
           <ul className="space-y-2 text-sm">
-            <li>admin@evovi.vn</li>
-            <li>0559726689</li>
+            <li>
+              <a href="mailto:kinhdoanh@evovi.vn" className="hover:text-background">kinhdoanh@evovi.vn</a>
+            </li>
+            <li>
+              Hotline 24/7:{" "}
+              <a href="tel:0868661235" className="hover:text-background">0868661235</a>
+            </li>
             <li>Hà Nội · TP. HCM</li>
           </ul>
         </div>

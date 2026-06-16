@@ -470,7 +470,7 @@ function ContactCTA() {
 function Footer() {
   return (
     <footer className="bg-foreground text-background/80 py-14">
-      <div className="container-x grid md:grid-cols-4 gap-10">
+      <div className="container-x grid md:grid-cols-5 gap-10">
         <div className="md:col-span-2">
           <div className="flex items-center">
             <EvoviLogoIcon size="md" />
@@ -483,6 +483,20 @@ function Footer() {
             <li><a href="#" className="hover:text-background">Về Evovi</a></li>
             <li><a href="#services" className="hover:text-background">Dịch vụ</a></li>
             <li><a href="#cases" className="hover:text-background">Dự án</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-background font-semibold mb-4">Ứng dụng</h4>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="/ad-canvas" className="hover:text-background">Ad Canvas</a>
+            </li>
+            <li>
+              <a href="/ad-canvas/support" className="hover:text-background">Hỗ trợ Ad Canvas</a>
+            </li>
+            <li>
+              <a href="/privacy/ad-canvas" className="hover:text-background">Quyền riêng tư Ad Canvas</a>
+            </li>
           </ul>
         </div>
         <div>

@@ -10,13 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as AdCanvasRouteImport } from './routes/ad-canvas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivacyElevator360RouteImport } from './routes/privacy/elevator-360'
 import { Route as PrivacyAdCanvasRouteImport } from './routes/privacy/ad-canvas'
+import { Route as AdCanvasSupportRouteImport } from './routes/ad-canvas/support'
 
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdCanvasRoute = AdCanvasRouteImport.update({
+  id: '/ad-canvas',
+  path: '/ad-canvas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,23 +41,34 @@ const PrivacyAdCanvasRoute = PrivacyAdCanvasRouteImport.update({
   path: '/privacy/ad-canvas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdCanvasSupportRoute = AdCanvasSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AdCanvasRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ad-canvas': typeof AdCanvasRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/ad-canvas/support': typeof AdCanvasSupportRoute
   '/privacy/ad-canvas': typeof PrivacyAdCanvasRoute
   '/privacy/elevator-360': typeof PrivacyElevator360Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ad-canvas': typeof AdCanvasRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/ad-canvas/support': typeof AdCanvasSupportRoute
   '/privacy/ad-canvas': typeof PrivacyAdCanvasRoute
   '/privacy/elevator-360': typeof PrivacyElevator360Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ad-canvas': typeof AdCanvasRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/ad-canvas/support': typeof AdCanvasSupportRoute
   '/privacy/ad-canvas': typeof PrivacyAdCanvasRoute
   '/privacy/elevator-360': typeof PrivacyElevator360Route
 }
@@ -58,21 +76,32 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ad-canvas'
     | '/privacy-policy'
+    | '/ad-canvas/support'
     | '/privacy/ad-canvas'
     | '/privacy/elevator-360'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/privacy-policy' | '/privacy/ad-canvas' | '/privacy/elevator-360'
+  to:
+    | '/'
+    | '/ad-canvas'
+    | '/privacy-policy'
+    | '/ad-canvas/support'
+    | '/privacy/ad-canvas'
+    | '/privacy/elevator-360'
   id:
     | '__root__'
     | '/'
+    | '/ad-canvas'
     | '/privacy-policy'
+    | '/ad-canvas/support'
     | '/privacy/ad-canvas'
     | '/privacy/elevator-360'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdCanvasRoute: typeof AdCanvasRouteWithChildren
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   PrivacyAdCanvasRoute: typeof PrivacyAdCanvasRoute
   PrivacyElevator360Route: typeof PrivacyElevator360Route
@@ -85,6 +114,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy-policy'
       fullPath: '/privacy-policy'
       preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ad-canvas': {
+      id: '/ad-canvas'
+      path: '/ad-canvas'
+      fullPath: '/ad-canvas'
+      preLoaderRoute: typeof AdCanvasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -108,11 +144,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyAdCanvasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ad-canvas/support': {
+      id: '/ad-canvas/support'
+      path: '/support'
+      fullPath: '/ad-canvas/support'
+      preLoaderRoute: typeof AdCanvasSupportRouteImport
+      parentRoute: typeof AdCanvasRoute
+    }
   }
 }
 
+interface AdCanvasRouteChildren {
+  AdCanvasSupportRoute: typeof AdCanvasSupportRoute
+}
+
+const AdCanvasRouteChildren: AdCanvasRouteChildren = {
+  AdCanvasSupportRoute: AdCanvasSupportRoute,
+}
+
+const AdCanvasRouteWithChildren = AdCanvasRoute._addFileChildren(
+  AdCanvasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdCanvasRoute: AdCanvasRouteWithChildren,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   PrivacyAdCanvasRoute: PrivacyAdCanvasRoute,
   PrivacyElevator360Route: PrivacyElevator360Route,

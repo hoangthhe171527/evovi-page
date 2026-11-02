@@ -31,56 +31,58 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-display: "Be Vietnam Pro", system-ui, sans-serif;
   --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.5rem;
 
-  --evo-obsidian: #070d18;
-  --evo-midnight: #0d1728;
-  --evo-slate-dark: #142238;
-  --evo-paper: #eef2f6;
-  --evo-stone: #dfe6ef;
-  --evo-sheet: #ffffff;
+  /* Unified Deep Navy-Black Enterprise Surface Architecture */
+  --evo-abyss: #050b16;
+  --evo-midnight: #081224;
+  --evo-panel: #0d1b33;
+  --evo-steel: #132747;
+  --evo-footer: #030710;
 
-  --evo-ink: #0b1320;
-  --evo-ink-muted: #465468;
-  --evo-light: #f4f7fb;
-  --evo-light-muted: #a6b4c8;
+  /* High-Legibility Enterprise Ink System (WCAG AAA/AA on Navy) */
+  --evo-heading: #f5f8ff;
+  --evo-body-ink: #d6e2f5;
+  --evo-muted-ink: #9eb2d0;
 
-  --evo-cobalt: #095fd6;
-  --evo-cobalt-bright: #2480ff;
-  --evo-orange: #f59422;
-  --evo-emerald: #3cb34a;
+  /* Controlled Executive Accents */
+  --evo-cobalt: #0b63e5;
+  --evo-cobalt-hover: #247eff;
+  --evo-azure: #5ca4ff;
+  --evo-amber: #f5a623;
+  --evo-emerald: #34c759;
 
-  /* Strict 5-step typographic scale */
-  --step-hero: clamp(2.2rem, 4.4vw, 4.1rem);
-  --step-h2: clamp(1.75rem, 3.1vw, 2.95rem);
-  --step-h3: 1.5rem;
+  /* Strict 5-step Vietnamese enterprise typographic scale */
+  --step-hero: clamp(2.1rem, 4vw, 3.75rem);
+  --step-h2: clamp(1.625rem, 2.75vw, 2.55rem);
+  --step-h3: 1.375rem;
   --step-body: 1.0625rem;
   --step-small: 0.875rem;
 
-  --background: #eef2f6;
-  --foreground: #0b1320;
-  --card: #ffffff;
-  --card-foreground: #0b1320;
-  --popover: #ffffff;
-  --popover-foreground: #0b1320;
-  --primary: #095fd6;
+  --background: #050b16;
+  --foreground: #d6e2f5;
+  --card: #0d1b33;
+  --card-foreground: #f5f8ff;
+  --popover: #0d1b33;
+  --popover-foreground: #f5f8ff;
+  --primary: #0b63e5;
   --primary-foreground: #ffffff;
-  --secondary: #dfe6ef;
-  --secondary-foreground: #0b1320;
-  --muted: #dfe6ef;
-  --muted-foreground: #465468;
-  --accent: #dbe7f9;
-  --accent-foreground: #095fd6;
-  --destructive: #c8322b;
+  --secondary: #132747;
+  --secondary-foreground: #f5f8ff;
+  --muted: #0d1b33;
+  --muted-foreground: #9eb2d0;
+  --accent: #132747;
+  --accent-foreground: #5ca4ff;
+  --destructive: #d93832;
   --destructive-foreground: #ffffff;
-  --border: #cdd7e5;
-  --input: #d5dfec;
-  --ring: #095fd6;
+  --border: #193158;
+  --input: #081224;
+  --ring: #247eff;
 }
 
 @layer base {
@@ -89,21 +91,22 @@
   }
 
   html {
-    background-color: var(--evo-obsidian);
-    color: var(--evo-ink);
+    background-color: var(--evo-abyss);
+    color: var(--evo-body-ink);
     font-family: var(--font-sans);
     font-size: 16px;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
   body {
-    background-color: var(--evo-paper);
-    color: var(--evo-ink);
+    background-color: var(--evo-abyss);
+    color: var(--evo-body-ink);
     font-family: var(--font-sans);
     font-size: var(--step-body);
-    line-height: 1.6;
+    line-height: 1.68;
     overflow-x: clip;
   }
 
@@ -112,7 +115,8 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.03em;
+    color: var(--evo-heading);
+    letter-spacing: -0.02em;
   }
 }
 
@@ -129,30 +133,30 @@
 
 @utility text-evo-hero {
   font-size: var(--step-hero);
-  line-height: 0.98;
-  letter-spacing: -0.038em;
+  line-height: 1.16;
+  letter-spacing: -0.024em;
 }
 
 @utility text-evo-h2 {
   font-size: var(--step-h2);
-  line-height: 1.04;
-  letter-spacing: -0.032em;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
 }
 
 @utility text-evo-h3 {
   font-size: var(--step-h3);
-  line-height: 1.22;
-  letter-spacing: -0.025em;
+  line-height: 1.34;
+  letter-spacing: -0.014em;
 }
 
 @utility text-evo-body {
   font-size: var(--step-body);
-  line-height: 1.6;
+  line-height: 1.68;
 }
 
 @utility text-evo-small {
   font-size: var(--step-small);
-  line-height: 1.45;
+  line-height: 1.55;
 }
 
 @utility tabular-nums {
@@ -162,8 +166,10 @@
 .evo-line-mask {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+  padding-top: 0.14em;
+  margin-top: -0.14em;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
 }
 
 .evo-line-inner {
@@ -177,12 +183,29 @@
   will-change: transform;
 }
 
+@keyframes evoPanelReveal {
+  from {
+    opacity: 0.55;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.evo-panel-enter {
+  animation: evoPanelReveal 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .evo-line-inner,
-  .evo-ribbon-track {
+  .evo-ribbon-track,
+  .evo-panel-enter {
+    animation: none !important;
     transform: none !important;
     will-change: auto;
   }

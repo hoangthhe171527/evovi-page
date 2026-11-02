@@ -69,12 +69,12 @@ function AdCanvasSupportPage() {
       <article className="space-y-14">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-5">
-            <p className="max-w-[38ch] text-evo-body text-[#465468]">
+            <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
               Đội ngũ kỹ thuật Evovi hỗ trợ người dùng Ad Canvas về đăng nhập, quyền truy cập tổ chức, sự cố ứng dụng và yêu cầu dữ liệu trong giờ hành chính (GMT+7).
             </p>
           </div>
           <div className="lg:col-span-7">
-            <h1 className="font-display text-evo-hero font-extrabold text-[#0b1320]">
+            <h1 className="font-display text-evo-hero font-bold text-[#f5f8ff]">
               Hỗ trợ {adCanvasApp.name}
             </h1>
           </div>
@@ -83,25 +83,29 @@ function AdCanvasSupportPage() {
         <div className="grid gap-6 sm:grid-cols-2">
           <a
             href={`mailto:${adCanvasApp.supportEmail}?subject=${encodeURIComponent("Ad Canvas - Yêu cầu hỗ trợ")}`}
-            className="block border-l-4 border-[#095fd6] bg-white p-7 transition-colors hover:bg-[#dfe6ef]"
+            className="block border-l-4 border-[#247eff] bg-[#0d1b33] p-7 transition-colors hover:bg-[#132747]"
           >
-            <h2 className="font-display text-evo-h3 font-bold text-[#0b1320]">Email hỗ trợ</h2>
-            <p className="mt-2 text-evo-body font-semibold text-[#095fd6]">
+            <h2 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
+              Email hỗ trợ
+            </h2>
+            <p className="mt-2 text-evo-body font-semibold text-[#5ca4ff]">
               {adCanvasApp.supportEmail}
             </p>
-            <p className="mt-2 text-evo-small text-[#465468]">
+            <p className="mt-2 text-evo-small text-[#9eb2d0]">
               Phù hợp cho sự cố kỹ thuật và yêu cầu xử lý dữ liệu tài khoản.
             </p>
           </a>
           <a
             href={`tel:${adCanvasApp.hotline}`}
-            className="block border-l-4 border-[#3cb34a] bg-white p-7 transition-colors hover:bg-[#dfe6ef]"
+            className="block border-l-4 border-[#34c759] bg-[#0d1b33] p-7 transition-colors hover:bg-[#132747]"
           >
-            <h2 className="font-display text-evo-h3 font-bold text-[#0b1320]">Hotline trực tiếp</h2>
-            <p className="mt-2 text-evo-body font-semibold tabular-nums text-[#0b1320]">
+            <h2 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
+              Hotline trực tiếp
+            </h2>
+            <p className="mt-2 text-evo-body font-semibold tabular-nums text-[#f5f8ff]">
               {adCanvasApp.hotline}
             </p>
-            <p className="mt-2 text-evo-small text-[#465468]">
+            <p className="mt-2 text-evo-small text-[#9eb2d0]">
               Hỗ trợ khẩn cấp cho chiến dịch đang vận hành trong giờ làm việc.
             </p>
           </a>
@@ -109,17 +113,17 @@ function AdCanvasSupportPage() {
 
         <section className="grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <h2 className="font-display text-evo-h2 font-extrabold text-[#0b1320]">
+            <h2 className="font-display text-evo-h2 font-bold text-[#f5f8ff]">
               Câu hỏi thường gặp
             </h2>
           </div>
-          <dl className="space-y-6 lg:col-span-7">
+          <dl className="space-y-5 lg:col-span-7">
             {FAQ.map((item) => (
-              <div key={item.q} className="bg-white p-6 md:p-7">
-                <dt className="font-display text-evo-h3 font-bold text-[#0b1320]">
+              <div key={item.q} className="rounded-lg bg-[#0d1b33] p-6 md:p-7">
+                <dt className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
                   {item.q}
                 </dt>
-                <dd className="mt-2.5 max-w-[60ch] text-evo-body text-[#465468]">
+                <dd className="mt-2.5 max-w-[60ch] text-evo-body text-[#d6e2f5]">
                   {item.a}
                 </dd>
               </div>
@@ -127,17 +131,17 @@ function AdCanvasSupportPage() {
           </dl>
         </section>
 
-        <section className="bg-[#070d18] p-8 text-[#f4f7fb] md:p-10">
-          <h2 className="font-display text-evo-h3 font-bold">
+        <section className="rounded-lg bg-[#081224] p-8 text-[#f5f8ff] md:p-10">
+          <h2 className="font-display text-evo-h3 font-semibold">
             Quyền riêng tư & Dữ liệu doanh nghiệp
           </h2>
-          <p className="mt-2.5 max-w-[62ch] text-evo-body text-[#a6b4c8]">
+          <p className="mt-2.5 max-w-[62ch] text-evo-body text-[#d6e2f5]">
             Xem{" "}
-            <Link to="/privacy/ad-canvas" className="font-semibold text-[#f59422] hover:underline">
+            <Link to="/privacy/ad-canvas" className="font-semibold text-[#5ca4ff] hover:underline">
               Chính sách quyền riêng tư Ad Canvas
             </Link>{" "}
             để nắm rõ cách hệ thống bảo vệ dữ liệu nghiệp vụ. Quay lại{" "}
-            <Link to="/ad-canvas" className="font-semibold text-[#f4f7fb] hover:underline">
+            <Link to="/ad-canvas" className="font-semibold text-[#f5f8ff] hover:underline">
               trang giới thiệu Ad Canvas
             </Link>
             .

@@ -66,8 +66,8 @@ function AdCanvasMarketingPage() {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         "[data-ac-hero]",
-        { y: 12, opacity: 0.45 },
-        { y: 0, opacity: 1, duration: 0.45, stagger: 0.05, ease: "power2.out" },
+        { y: 12, opacity: 0.48 },
+        { y: 0, opacity: 1, duration: 0.46, stagger: 0.05, ease: "power2.out" },
       );
 
       ScrollTrigger.create({
@@ -95,12 +95,31 @@ function AdCanvasMarketingPage() {
         },
       );
 
+      gsap.utils.toArray<HTMLElement>("[data-ac-heading]", rootRef.current).forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 22, opacity: 0.52 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              end: "top 64%",
+              scrub: 0.35,
+            },
+          },
+        );
+      });
+
       gsap.utils.toArray<HTMLElement>("[data-ac-step]", rootRef.current).forEach((el) => {
         gsap.fromTo(
           el,
-          { y: 20 },
+          { y: 20, opacity: 0.62 },
           {
             y: 0,
+            opacity: 1,
             ease: "power2.out",
             scrollTrigger: {
               trigger: el,
@@ -114,7 +133,7 @@ function AdCanvasMarketingPage() {
 
       gsap.fromTo(
         "[data-ac-photo]",
-        { scale: 1.08 },
+        { scale: 1.09 },
         {
           scale: 1,
           ease: "none",
@@ -137,26 +156,26 @@ function AdCanvasMarketingPage() {
         {/* HERO STAGE */}
         <section
           data-ac-stage
-          className="relative overflow-hidden bg-[#070d18] py-16 text-[#f4f7fb] md:py-24"
+          className="relative overflow-hidden bg-[#050b16] py-16 text-[#f5f8ff] md:py-24"
         >
           <HeroTriSpectrumCanvas scrollProgressRef={heroScrollRef} />
 
           <div className="container-evo relative z-10">
             <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
               <div className="order-2 lg:order-1 lg:col-span-5" data-ac-hero>
-                <p className="max-w-[38ch] text-evo-body text-[#a6b4c8]">
+                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
                   Ad Canvas dành cho doanh nghiệp khai thác quảng cáo ngoài trời trên xe buýt, taxi, pano và màn hình trung tâm thương mại. Từ cơ hội bán hàng, hợp đồng, lịch đặt chỗ đến ảnh nghiệm thu hiện trường đều đồng bộ tức thời.
                 </p>
                 <div className="mt-7 flex flex-wrap gap-3">
                   <Link
                     to="/ad-canvas/support"
-                    className="inline-flex items-center gap-2 rounded-md bg-[#095fd6] px-6 py-3.5 text-evo-small font-semibold text-white transition-colors hover:bg-[#2480ff]"
+                    className="inline-flex items-center gap-2 rounded-md bg-[#0b63e5] px-6 py-3.5 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff]"
                   >
                     Liên hệ hỗ trợ triển khai →
                   </Link>
                   <Link
                     to="/privacy/ad-canvas"
-                    className="inline-flex items-center gap-2 rounded-md bg-[#0d1728] px-5 py-3.5 text-evo-small font-semibold text-[#f4f7fb] transition-colors hover:bg-[#142238]"
+                    className="inline-flex items-center gap-2 rounded-md bg-[#0d1b33] px-5 py-3.5 text-evo-small font-semibold text-[#f5f8ff] transition-colors hover:bg-[#132747]"
                   >
                     Chính sách quyền riêng tư
                   </Link>
@@ -164,14 +183,14 @@ function AdCanvasMarketingPage() {
               </div>
 
               <div className="order-1 lg:order-2 lg:col-span-7" data-ac-hero>
-                <h1 className="font-display text-evo-hero font-extrabold text-[#f4f7fb]">
+                <h1 className="font-display text-evo-hero font-bold text-[#f5f8ff]">
                   {adCanvasApp.name}
                 </h1>
-                <p className="mt-3 font-display text-evo-h3 font-bold text-[#f59422]">
+                <p className="mt-3 font-display text-evo-h3 font-semibold text-[#5ca4ff]">
                   {adCanvasApp.tagline}
                 </p>
 
-                <div className="mt-8 overflow-hidden bg-[#0d1728]">
+                <div className="mt-8 overflow-hidden rounded-lg bg-[#0d1b33]">
                   <img
                     src={oohCityImg}
                     alt="Màn hình quảng cáo ngoài trời OOH tại đô thị vận hành qua Ad Canvas"
@@ -185,17 +204,20 @@ function AdCanvasMarketingPage() {
           </div>
         </section>
 
-        {/* CORE WORKFLOW CONDUIT + LIVE TELEMETRY */}
-        <section className="bg-[#eef2f6] py-20 text-[#0b1320] md:py-28">
+        {/* CORE WORKFLOW CONDUIT + LIVE TELEMETRY (#081224 Midnight Navy) */}
+        <section className="bg-[#081224] py-20 text-[#f5f8ff] md:py-28">
           <div className="container-evo">
             <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
               <div className="lg:col-span-5">
-                <p className="max-w-[36ch] text-evo-body text-[#465468]">
+                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
                   Giải quyết trọn vẹn bài toán thuê vị trí dài hạn rồi chia kỳ hạn bán lại cho nhiều nhãn hàng mà không trùng lịch hay thất thoát tồn kho.
                 </p>
               </div>
               <div className="lg:col-span-7">
-                <h2 className="font-display text-evo-h2 font-extrabold text-[#0b1320]">
+                <h2
+                  data-ac-heading
+                  className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
+                >
                   Bốn phân hệ nghiệp vụ cốt lõi
                 </h2>
               </div>
@@ -203,20 +225,20 @@ function AdCanvasMarketingPage() {
 
             <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:items-start">
               <div data-ac-list className="relative pl-8 lg:col-span-6">
-                <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-[#c3cfdf]">
+                <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-[#132747]">
                   <div
                     data-ac-conduit
-                    className="h-full w-full bg-[#095fd6] will-change-transform"
+                    className="h-full w-full bg-[#247eff] will-change-transform"
                   />
                 </div>
 
-                <ol className="list-decimal space-y-8 pl-6 marker:font-display marker:text-evo-h3 marker:font-extrabold marker:text-[#095fd6]">
+                <ol className="list-decimal space-y-8 pl-6 marker:font-display marker:text-evo-h3 marker:font-bold marker:text-[#5ca4ff]">
                   {adCanvasApp.features.map((f) => (
                     <li key={f.title} data-ac-step className="py-1">
-                      <h3 className="font-display text-evo-h3 font-bold text-[#0b1320]">
+                      <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
                         {f.title}
                       </h3>
-                      <p className="mt-2 max-w-[52ch] text-evo-body text-[#465468]">
+                      <p className="mt-2 max-w-[52ch] text-evo-body text-[#d6e2f5]">
                         {f.description}
                       </p>
                     </li>
@@ -227,14 +249,14 @@ function AdCanvasMarketingPage() {
               <div className="lg:sticky lg:top-24 lg:col-span-6">
                 <div
                   data-ui="adcanvas-occupancy"
-                  className="rounded-lg bg-[#070d18] p-6 text-[#f4f7fb] md:p-8"
+                  className="rounded-lg bg-[#0d1b33] p-6 text-[#f5f8ff] md:p-8"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-evo-small font-semibold text-[#f4f7fb]">
-                      AD CANVAS · TỒN KHO & CHIẾN DỊCH TRỰC TIẾP
+                    <span className="text-evo-small font-semibold text-[#f5f8ff]">
+                      Ad Canvas · Tồn kho & chiến dịch trực tiếp
                     </span>
-                    <span className="rounded bg-[#3cb34a] px-3 py-1 text-evo-small font-bold text-[#070d18]">
-                      ĐỒNG BỘ TỨC THỜI
+                    <span className="rounded bg-[#34c759] px-3 py-1 text-evo-small font-bold text-[#050b16]">
+                      Đồng bộ tức thời
                     </span>
                   </div>
 
@@ -244,31 +266,31 @@ function AdCanvasMarketingPage() {
                         name: "Cụm Pano & Màn LED TTTM Quận 1",
                         sub: "Đã khóa lịch 14/14 vị trí quý 4",
                         badge: "100% Occupancy",
-                        bg: "bg-[#3cb34a] text-[#070d18]",
+                        bg: "bg-[#34c759] text-[#050b16]",
                       },
                       {
                         name: "Tuyến Xe buýt Đô thị (68 xe)",
                         sub: "Tài xế đã gửi ảnh proof đầu kỳ",
                         badge: "Đã nghiệm thu",
-                        bg: "bg-[#095fd6] text-white",
+                        bg: "bg-[#0b63e5] text-white",
                       },
                       {
                         name: "Kỳ hạn mở bán tháng tới",
                         sub: "9 vị trí trống sẵn sàng báo giá",
                         badge: "Sẵn sàng chào bán",
-                        bg: "bg-[#f59422] text-[#070d18]",
+                        bg: "bg-[#f5a623] text-[#050b16]",
                       },
                     ].map((row) => (
                       <div
                         key={row.name}
                         data-ac-step
-                        className="flex flex-wrap items-center justify-between gap-3 rounded bg-[#0d1728] p-4"
+                        className="flex flex-wrap items-center justify-between gap-3 rounded bg-[#050b16] p-4"
                       >
                         <div>
-                          <div className="text-evo-body font-semibold text-[#f4f7fb]">
+                          <div className="text-evo-body font-semibold text-[#f5f8ff]">
                             {row.name}
                           </div>
-                          <div className="mt-0.5 text-evo-small text-[#a6b4c8]">
+                          <div className="mt-0.5 text-evo-small text-[#9eb2d0]">
                             {row.sub}
                           </div>
                         </div>
@@ -284,17 +306,20 @@ function AdCanvasMarketingPage() {
           </div>
         </section>
 
-        {/* ARCHITECTURAL PHOTOGRAPHY & MULTI-ROLE OPERATIONS */}
-        <section className="bg-[#dfe6ef] py-20 text-[#0b1320] md:py-28">
+        {/* ARCHITECTURAL PHOTOGRAPHY & MULTI-ROLE OPERATIONS (#050b16 Abyssal Navy) */}
+        <section className="bg-[#050b16] py-20 text-[#f5f8ff] md:py-28">
           <div className="container-evo">
             <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
               <div className="lg:col-span-5">
-                <p className="max-w-[36ch] text-evo-body text-[#465468]">
+                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
                   Mỗi vai trò trong tổ chức mở ứng dụng lên đều thấy đúng việc cần làm trên một nguồn dữ liệu thống nhất.
                 </p>
               </div>
               <div className="lg:col-span-7">
-                <h2 className="font-display text-evo-h2 font-extrabold text-[#0b1320]">
+                <h2
+                  data-ac-heading
+                  className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
+                >
                   Vận hành liên thông bốn vai trò
                 </h2>
               </div>
@@ -302,7 +327,7 @@ function AdCanvasMarketingPage() {
 
             <div
               data-ac-gallery
-              className="mt-12 grid overflow-hidden bg-[#070d18] lg:grid-cols-12"
+              className="mt-12 grid gap-3 overflow-hidden bg-[#081224] p-3 lg:grid-cols-12"
             >
               <div className="overflow-hidden lg:col-span-4">
                 <img
@@ -341,20 +366,20 @@ function AdCanvasMarketingPage() {
 
             <div className="mt-14 grid gap-8 lg:grid-cols-12">
               <div className="lg:col-span-5">
-                <h3 className="font-display text-evo-h3 font-bold text-[#0b1320]">
+                <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
                   Nhóm người dùng trong doanh nghiệp
                 </h3>
-                <p className="mt-3 max-w-[38ch] text-evo-body text-[#465468]">
+                <p className="mt-3 max-w-[38ch] text-evo-body text-[#d6e2f5]">
                   Ad Canvas cấp tài khoản theo từng tổ chức khách hàng với phân quyền tách biệt rõ ràng.
                 </p>
               </div>
               <div className="lg:col-span-7">
-                <ul className="space-y-4">
+                <ul className="space-y-3.5">
                   {adCanvasApp.audiences.map((a) => (
                     <li
                       key={a}
                       data-ac-step
-                      className="border-l-4 border-[#095fd6] bg-white px-6 py-4 text-evo-body font-medium text-[#0b1320]"
+                      className="border-l-4 border-[#247eff] bg-[#0d1b33] px-6 py-4 text-evo-body font-medium text-[#f5f8ff]"
                     >
                       {a}
                     </li>
@@ -365,28 +390,31 @@ function AdCanvasMarketingPage() {
           </div>
         </section>
 
-        {/* CLOSING CTA STAGE */}
-        <section className="relative overflow-hidden bg-[#070d18] py-20 text-[#f4f7fb]">
+        {/* CLOSING CTA STAGE (#081224 Midnight Navy) */}
+        <section className="relative overflow-hidden bg-[#081224] py-20 text-[#f5f8ff]">
           <HorizonSignalCanvas />
           <div className="container-evo relative z-10 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
-              <h2 className="font-display text-evo-h2 font-extrabold text-[#f4f7fb]">
+              <h2
+                data-ac-heading
+                className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
+              >
                 Sẵn sàng chuẩn hóa vận hành OOH?
               </h2>
-              <p className="mt-3 max-w-[50ch] text-evo-body text-[#a6b4c8]">
+              <p className="mt-3 max-w-[50ch] text-evo-body text-[#d6e2f5]">
                 Liên hệ đội ngũ kỹ thuật Evovi để được tư vấn triển khai tổ chức mới hoặc hỗ trợ tài khoản đang sử dụng trên hệ thống {adCanvasApp.apiHost}.
               </p>
             </div>
             <div className="flex flex-wrap gap-3 lg:col-span-5 lg:justify-end">
               <Link
                 to="/ad-canvas/support"
-                className="inline-flex items-center gap-2 rounded-md bg-[#095fd6] px-6 py-3.5 text-evo-small font-semibold text-white transition-colors hover:bg-[#2480ff]"
+                className="inline-flex items-center gap-2 rounded-md bg-[#0b63e5] px-6 py-3.5 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff]"
               >
                 Mở trung tâm hỗ trợ →
               </Link>
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 rounded-md bg-[#0d1728] px-5 py-3.5 text-evo-small font-semibold text-[#f4f7fb] transition-colors hover:bg-[#142238]"
+                className="inline-flex items-center gap-2 rounded-md bg-[#0d1b33] px-5 py-3.5 text-evo-small font-semibold text-[#f5f8ff] transition-colors hover:bg-[#132747]"
               >
                 Khám phá hệ sinh thái Evovi
               </Link>

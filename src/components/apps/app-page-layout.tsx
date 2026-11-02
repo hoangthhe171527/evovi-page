@@ -24,26 +24,26 @@ export function AppPageLayout({
   ];
 
   return (
-    <div className="flex min-h-svh flex-col bg-[#eef2f6] text-[#0b1320]">
-      <header className="sticky top-0 z-50 bg-[#070d18] text-[#f4f7fb]">
-        <div className="container-evo flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+    <div className="flex min-h-svh flex-col bg-[#050b16] text-[#d6e2f5]">
+      <header className="sticky top-0 z-50 bg-[#050b16] text-[#f5f8ff]">
+        <div className="container-evo flex h-16 items-center justify-between gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link to="/" aria-label="Trang chủ Evovi" className="shrink-0">
-              <EvoviLogoIcon size="sm" surface="tile" />
+              <EvoviLogoIcon size="sm" />
             </Link>
             <Link
               to="/ad-canvas"
-              className="font-display text-evo-body font-extrabold text-[#f59422]"
+              className="whitespace-nowrap font-display text-evo-small font-bold text-[#5ca4ff] sm:text-evo-body"
             >
               {appName}
             </Link>
           </div>
-          <nav className="hidden items-center gap-7 text-evo-small font-medium text-[#a6b4c8] sm:flex">
+          <nav className="hidden items-center gap-7 text-evo-small font-medium text-[#d6e2f5] md:flex">
             {links.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
-                className="transition-colors hover:text-[#f4f7fb]"
+                className="transition-colors hover:text-[#5ca4ff]"
               >
                 {item.label}
               </Link>
@@ -51,9 +51,9 @@ export function AppPageLayout({
           </nav>
           <Link
             to="/"
-            className="rounded-md bg-[#095fd6] px-4 py-2 text-evo-small font-semibold text-white transition-colors hover:bg-[#2480ff]"
+            className="shrink-0 whitespace-nowrap rounded-md bg-[#0b63e5] px-3 py-2 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff] sm:px-4"
           >
-            Về Evovi.vn →
+            Về Evovi<span className="hidden sm:inline">.vn</span> →
           </Link>
         </div>
       </header>
@@ -62,22 +62,22 @@ export function AppPageLayout({
         {children}
       </main>
 
-      <footer className="overflow-hidden bg-[#040810] pt-16 pb-12 text-[#a6b4c8]">
+      <footer className="overflow-hidden bg-[#030710] pt-16 pb-12 text-[#9eb2d0]">
         <div className="container-evo">
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-5">
-              <EvoviLogoIcon size="md" surface="tile" />
-              <p className="mt-4 max-w-[42ch] text-evo-body text-[#f4f7fb]">
+              <EvoviLogoIcon size="md" />
+              <p className="mt-4 max-w-[42ch] text-evo-body text-[#d6e2f5]">
                 {adCanvasApp.name} · {adCanvasApp.tagline}. Phát triển bởi {adCanvasApp.developer}.
               </p>
               <div className="mt-6 flex flex-wrap gap-5 text-evo-small font-semibold">
-                <Link to="/ad-canvas" className="text-[#f59422] hover:underline">
+                <Link to="/ad-canvas" className="text-[#5ca4ff] hover:underline">
                   Trang giới thiệu
                 </Link>
-                <Link to="/ad-canvas/support" className="text-[#f4f7fb] hover:underline">
+                <Link to="/ad-canvas/support" className="text-[#f5f8ff] hover:underline">
                   Trung tâm hỗ trợ
                 </Link>
-                <Link to="/privacy/ad-canvas" className="text-[#f4f7fb] hover:underline">
+                <Link to="/privacy/ad-canvas" className="text-[#f5f8ff] hover:underline">
                   Chính sách quyền riêng tư
                 </Link>
               </div>
@@ -86,40 +86,40 @@ export function AppPageLayout({
             <div className="lg:col-span-7 lg:text-right">
               <ul className="inline-block space-y-2.5 text-left text-evo-body lg:text-right">
                 <li className="flex items-center gap-2.5 lg:justify-end">
-                  <Building2 className="h-4 w-4 shrink-0 text-[#f59422]" aria-hidden />
-                  <span className="text-[#f4f7fb]">Đơn vị phát triển: {adCanvasApp.developer}</span>
+                  <Building2 className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden />
+                  <span className="text-[#f5f8ff]">Đơn vị phát triển: {adCanvasApp.developer}</span>
                 </li>
                 <li className="flex items-center gap-2.5 lg:justify-end">
-                  <Phone className="h-4 w-4 shrink-0 text-[#3cb34a]" aria-hidden />
+                  <Phone className="h-4 w-4 shrink-0 text-[#34c759]" aria-hidden />
                   <span>
                     Hotline:{" "}
                     <a
                       href={`tel:${adCanvasApp.hotline}`}
-                      className="font-semibold tabular-nums text-[#f4f7fb] hover:text-[#f59422]"
+                      className="font-semibold tabular-nums text-[#f5f8ff] hover:text-[#5ca4ff]"
                     >
                       {adCanvasApp.hotline}
                     </a>
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5 lg:justify-end">
-                  <Mail className="h-4 w-4 shrink-0 text-[#2480ff]" aria-hidden />
+                  <Mail className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden />
                   <span>
                     Email:{" "}
                     <a
                       href={`mailto:${adCanvasApp.supportEmail}`}
-                      className="font-semibold text-[#f4f7fb] hover:text-[#f59422]"
+                      className="font-semibold text-[#f5f8ff] hover:text-[#5ca4ff]"
                     >
                       {adCanvasApp.supportEmail}
                     </a>
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5 lg:justify-end">
-                  <Globe className="h-4 w-4 shrink-0 text-[#2480ff]" aria-hidden />
+                  <Globe className="h-4 w-4 shrink-0 text-[#f5a623]" aria-hidden />
                   <a
                     href={adCanvasApp.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#f4f7fb] hover:text-[#f59422]"
+                    className="text-[#f5f8ff] hover:text-[#5ca4ff]"
                   >
                     {adCanvasApp.website}
                   </a>
@@ -130,12 +130,12 @@ export function AppPageLayout({
 
           <div
             aria-hidden="true"
-            className="mt-10 select-none font-display text-[clamp(3.8rem,13vw,11rem)] font-extrabold leading-[0.86] tracking-[-0.05em] text-[#5b7396]"
+            className="mt-10 select-none font-display text-[clamp(3.8rem,13vw,11rem)] font-bold leading-[0.88] tracking-[-0.04em] text-[#607ba3]"
           >
             AD CANVAS
           </div>
 
-          <div className="mt-6 flex flex-col justify-between gap-2 text-evo-small text-[#a6b4c8] sm:flex-row">
+          <div className="mt-6 flex flex-col justify-between gap-2 text-evo-small text-[#9eb2d0] sm:flex-row">
             <span>© {new Date().getFullYear()} {adCanvasApp.developer}. Bảo lưu mọi quyền.</span>
             <span>Gói ứng dụng: {adCanvasApp.packageId}</span>
           </div>

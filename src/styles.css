@@ -38,12 +38,28 @@
 :root {
   --radius: 0.5rem;
 
-  /* Unified Deep Navy-Black Enterprise Surface Architecture */
+  /* Pillar 5: Single-Hue 11-Step Cobalt Brand Ramp (50 -> 950) */
+  --brand-hue: 252;
+  --brand-50: oklch(0.97 0.02 var(--brand-hue));
+  --brand-100: oklch(0.93 0.05 var(--brand-hue));
+  --brand-200: oklch(0.86 0.09 var(--brand-hue));
+  --brand-300: oklch(0.76 0.14 var(--brand-hue));
+  --brand-400: oklch(0.66 0.18 var(--brand-hue));
+  --brand-500: #247eff;
+  --brand-600: #0b63e5;
+  --brand-700: #084fb8;
+  --brand-800: #0d2b5c;
+  --brand-900: #0a1f44;
+  --brand-950: #07142b;
+
+  /* Pillar 6: Lightness-Driven Dark Mode Surface Architecture */
   --evo-abyss: #050b16;
   --evo-midnight: #081224;
   --evo-panel: #0d1b33;
   --evo-steel: #132747;
   --evo-footer: #030710;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(147, 197, 253, 0.22);
 
   /* High-Legibility Enterprise Ink System (WCAG AAA/AA on Navy) */
   --evo-heading: #f5f8ff;
@@ -57,7 +73,41 @@
   --evo-amber: #f5a623;
   --evo-emerald: #34c759;
 
-  /* Strict 5-step Vietnamese enterprise typographic scale */
+  /* Pillar 6: Flipped Tonal Semantic Chips (Desaturated Dark Fill + Luminous Ink) */
+  --chip-info-bg: rgba(36, 126, 255, 0.15);
+  --chip-info-ink: #93c5fd;
+  --chip-info-border: rgba(92, 164, 255, 0.36);
+
+  --chip-success-bg: rgba(52, 199, 89, 0.14);
+  --chip-success-ink: #6ee7b7;
+  --chip-success-border: rgba(52, 199, 89, 0.36);
+
+  --chip-warning-bg: rgba(245, 166, 35, 0.14);
+  --chip-warning-ink: #fcd34d;
+  --chip-warning-border: rgba(245, 166, 35, 0.36);
+
+  --chip-danger-bg: rgba(239, 68, 68, 0.14);
+  --chip-danger-ink: #fca5a5;
+  --chip-danger-border: rgba(248, 113, 113, 0.38);
+
+  /* Pillar 7: Dark Mode Specular Rim (Lightness = Depth, no resting outer drop-shadow) */
+  --shadow-card-dark: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-btn-hover:
+    inset 0 1px 1px rgba(255, 255, 255, 0.24),
+    0 12px 28px -6px rgba(11, 99, 229, 0.28);
+
+  /* Pillar 3: Strict 4-Point Halvable Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Pillar 4: Controlled 5-step Vietnamese enterprise typographic scale */
   --step-hero: clamp(2.1rem, 4vw, 3.75rem);
   --step-h2: clamp(1.625rem, 2.75vw, 2.55rem);
   --step-h3: 1.375rem;
@@ -117,6 +167,7 @@
     font-family: var(--font-display);
     color: var(--evo-heading);
     letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 }
 
@@ -134,33 +185,381 @@
 @utility text-evo-hero {
   font-size: var(--step-hero);
   line-height: 1.16;
-  letter-spacing: -0.024em;
+  letter-spacing: -0.025em;
 }
 
 @utility text-evo-h2 {
   font-size: var(--step-h2);
-  line-height: 1.22;
-  letter-spacing: -0.02em;
+  line-height: 1.18;
+  letter-spacing: -0.022em;
 }
 
 @utility text-evo-h3 {
   font-size: var(--step-h3);
   line-height: 1.34;
-  letter-spacing: -0.014em;
+  letter-spacing: -0.015em;
 }
 
 @utility text-evo-body {
   font-size: var(--step-body);
-  line-height: 1.68;
+  line-height: 1.65;
 }
 
 @utility text-evo-small {
   font-size: var(--step-small);
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
 @utility tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   11-PILLAR MASTER CRAFT COMPONENT RECIPES (data-ui surface kit)
+   ============================================================ */
+
+@layer components {
+/* Pillar 6 & 7: Dark Mode Surface Elevation + Subtle Hairline + Specular Rim */
+.evo-header-glass {
+  background-color: rgba(5, 11, 22, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.evo-surface-card {
+  background-color: var(--evo-panel);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card-dark);
+}
+
+button.evo-surface-card {
+  box-shadow: none;
+}
+
+.evo-surface-well {
+  background-color: var(--evo-abyss);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.evo-mosaic-brand {
+  background-color: var(--brand-900);
+  border: 1px solid rgba(92, 164, 255, 0.22);
+  box-shadow: var(--shadow-card-dark);
+}
+
+/* Pillar 6: Flipped Tonal Semantic Badges */
+.evo-chip-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background-color: var(--chip-success-bg);
+  color: var(--chip-success-ink);
+  border: 1px solid var(--chip-success-border);
+}
+
+.evo-chip-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background-color: var(--chip-warning-bg);
+  color: var(--chip-warning-ink);
+  border: 1px solid var(--chip-warning-border);
+}
+
+.evo-chip-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background-color: var(--chip-info-bg);
+  color: var(--chip-info-ink);
+  border: 1px solid var(--chip-info-border);
+}
+
+/* Pillar 1: Segmented Control Track & Items */
+.evo-segmented-track {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background-color: var(--evo-abyss);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.evo-segmented-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: var(--step-small);
+  line-height: 1.45;
+  font-weight: 600;
+  color: var(--evo-muted-ink);
+  cursor: pointer;
+  transition:
+    transform 150ms ease-out,
+    background-color 150ms ease-out,
+    color 150ms ease-out,
+    opacity 150ms ease-out;
+}
+
+.evo-segmented-tab:hover:not(:disabled):not([data-active="true"]) {
+  color: var(--evo-heading);
+  background-color: rgba(19, 39, 71, 0.55);
+}
+
+.evo-segmented-tab[data-active="true"] {
+  background-color: var(--evo-cobalt);
+  color: #ffffff;
+}
+
+.evo-segmented-tab[data-active-tone="amber"] {
+  background-color: rgba(245, 166, 35, 0.18);
+  color: var(--chip-warning-ink);
+  border: 1px solid var(--chip-warning-border);
+}
+
+.evo-segmented-tab:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.evo-segmented-tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Pillar 8 & 9: 2:1 Buttons + All 5 Interactive States */
+.evo-btn-primary,
+.evo-btn-ghost {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: var(--step-small);
+  line-height: 1.45;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 140ms ease-out,
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    opacity 140ms ease-out;
+}
+
+.evo-btn-lg {
+  padding: 14px 28px;
+}
+
+.evo-btn-sm {
+  padding: 8px 16px;
+}
+
+.evo-btn-primary {
+  background-color: var(--evo-cobalt);
+  color: #ffffff;
+}
+
+.evo-btn-primary:hover:not(:disabled) {
+  background-color: var(--evo-cobalt-hover);
+  box-shadow: var(--shadow-btn-hover);
+}
+
+.evo-btn-ghost {
+  background-color: rgba(13, 27, 51, 0.42);
+  color: var(--evo-heading);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.evo-btn-ghost:hover:not(:disabled) {
+  background-color: var(--evo-steel);
+  border-color: rgba(92, 164, 255, 0.36);
+}
+
+.evo-btn-primary:active:not(:disabled),
+.evo-btn-ghost:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.evo-btn-primary:focus-visible,
+.evo-btn-ghost:focus-visible,
+.evo-segmented-tab:focus-visible {
+  outline: 2px solid var(--evo-azure);
+  outline-offset: 2px;
+}
+
+.evo-btn-primary:disabled,
+.evo-btn-ghost:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.evo-btn-primary[data-loading="true"] {
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.evo-btn-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  border-top-color: #ffffff;
+  animation: evoSpin 640ms linear infinite;
+}
+
+@keyframes evoSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pillar 9: 4-State Form Fields (Default, Focus, Error, Warning) */
+.evo-field-control {
+  width: 100%;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--evo-abyss);
+  padding: 12px 16px;
+  font-size: var(--step-body);
+  line-height: 1.5;
+  color: var(--evo-heading);
+  outline: none;
+  transition:
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out,
+    background-color 140ms ease-out;
+}
+
+.evo-field-control::placeholder {
+  color: rgba(158, 178, 208, 0.58);
+}
+
+.evo-field-control:hover:not(:disabled):not(:focus) {
+  border-color: rgba(147, 197, 253, 0.26);
+}
+
+.evo-field-control:focus {
+  border-color: var(--evo-cobalt-hover);
+  box-shadow: 0 0 0 3px rgba(36, 126, 255, 0.18);
+}
+
+.evo-field[data-state="error"] .evo-field-control {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
+}
+
+.evo-field[data-state="warning"] .evo-field-control {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+}
+
+/* Pillar 10: Slide-Up Copy Confirmation Chip (Compositor transform + opacity only) */
+.evo-copy-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background-color: rgba(19, 39, 71, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: var(--evo-muted-ink);
+  font-size: var(--step-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out,
+    transform 140ms ease-out;
+}
+
+.evo-copy-btn:hover {
+  background-color: var(--evo-steel);
+  color: var(--evo-heading);
+}
+
+.evo-copy-btn:active {
+  transform: scale(0.97);
+}
+
+.evo-copy-default,
+.evo-copy-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    transform 190ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease-out;
+}
+
+.evo-copy-toast {
+  position: absolute;
+  inset: 0;
+  justify-content: center;
+  color: var(--chip-success-ink);
+  font-weight: 600;
+  transform: translate3d(0, 120%, 0);
+  opacity: 0;
+}
+
+.evo-copy-btn[data-copied="true"] {
+  border-color: var(--chip-success-border);
+  background-color: var(--chip-success-bg);
+}
+
+.evo-copy-btn[data-copied="true"] .evo-copy-default {
+  transform: translate3d(0, -120%, 0);
+  opacity: 0;
+}
+
+.evo-copy-btn[data-copied="true"] .evo-copy-toast {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+/* Pillar 11: Directional Linear-Gradient Photo Scrim (Top 42% untouched, crisp legibility below) */
+.evo-photo-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(4, 8, 16, 0) 40%,
+    rgba(4, 8, 16, 0.62) 74%,
+    rgba(4, 8, 16, 0.9) 100%
+  );
+  pointer-events: none;
+}
+
+/* Horizontal Edge Dissolve Mask for Velocity Ribbons */
+.evo-ribbon-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
 }
 
 .evo-line-mask {
@@ -197,6 +596,7 @@
 .evo-panel-enter {
   animation: evoPanelReveal 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -204,7 +604,8 @@
   }
   .evo-line-inner,
   .evo-ribbon-track,
-  .evo-panel-enter {
+  .evo-panel-enter,
+  .evo-btn-spinner {
     animation: none !important;
     transform: none !important;
     will-change: auto;

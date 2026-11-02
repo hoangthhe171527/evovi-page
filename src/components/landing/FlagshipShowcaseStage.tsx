@@ -1,25 +1,47 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { ArrowRight, ArrowUpRight, ChevronRight } from "lucide-react";
 import {
   EVOVI_PROJECTS,
   FLAGSHIP_SLIDES,
   PROJECT_VERTICALS,
   type ProjectVerticalId,
 } from "@/data/evovi-projects";
+import { EditorialPhotoFrame } from "@/components/ui/EditorialPhotoFrame";
 import oohCityImg from "@/assets/evovi-ooh-city.jpg";
 import elevatorArchImg from "@/assets/evovi-elevator-arch.jpg";
 import studioBlueprintImg from "@/assets/evovi-studio-blueprint.jpg";
 import factoryOpsImg from "@/assets/evovi-factory-ops.jpg";
 
 const PHOTO_MAP = {
-  ooh: { src: oohCityImg, width: 1600, height: 900 },
-  elevator: { src: elevatorArchImg, width: 1080, height: 1440 },
-  studio: { src: studioBlueprintImg, width: 1440, height: 810 },
-  factory: { src: factoryOpsImg, width: 1080, height: 1440 },
+  ooh: {
+    src: oohCityImg,
+    width: 1600,
+    height: 900,
+    tag: "Ad Canvas · Evo AdTracker",
+  },
+  elevator: {
+    src: elevatorArchImg,
+    width: 1080,
+    height: 1440,
+    tag: "Elevator360 · ERP Công trình",
+  },
+  studio: {
+    src: studioBlueprintImg,
+    width: 1440,
+    height: 810,
+    tag: "Evo Books · Xuất bản số & AI",
+  },
+  factory: {
+    src: factoryOpsImg,
+    width: 1080,
+    height: 1440,
+    tag: "Enterprise LMS · EvoHub AI",
+  },
 } as const;
 
 type FlagshipShowcaseProps = {
-  onSelectProjectScope: (preset: string) => void;
+  onSelectProjectScope: (preset: string, projectName?: string) => void;
 };
 
 export function FlagshipShowcaseStage({
@@ -44,14 +66,14 @@ export function FlagshipShowcaseStage({
         className="bg-[#050b16] py-20 text-[#f5f8ff] md:py-28"
       >
         <div className="container-evo">
-          {/* Strict 42%-axis header (5fr / 7fr) */}
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-5" data-section-sub>
+          {/* Pillar 2 & 3: H2 leads first on Mobile, 42%-axis split on Desktop, 16px mobile proximity */}
+          <div className="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-8">
+            <div className="order-2 lg:order-1 lg:col-span-5" data-section-sub>
               <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
                 Không dừng ở bản vẽ ý tưởng. Dưới đây là các hệ thống phần mềm, nền tảng học tập, ERP công trình và tác nhân AI do đội ngũ Evovi trực tiếp kiến trúc trên 39 kho mã nguồn chuyên biệt.
               </p>
             </div>
-            <div className="lg:col-span-7">
+            <div className="order-1 lg:order-2 lg:col-span-7">
               <h2
                 data-section-heading
                 className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
@@ -61,54 +83,62 @@ export function FlagshipShowcaseStage({
             </div>
           </div>
 
-          {/* Editorial Dual-Photo Architectural Band (Flush container margins, scrubbed inner image zoom) */}
+          {/* Pillar 11: Dual-Photo Architectural Band with Progressive Blur + Gradient Scrim Captions */}
           <div
             data-expand-window
-            className="mt-14 grid gap-3 overflow-hidden bg-[#081224] p-3 lg:grid-cols-12"
+            className="mt-12 grid gap-3 overflow-hidden rounded-xl bg-[#081224] p-3 md:mt-14 lg:grid-cols-12"
           >
-            <div className="relative overflow-hidden lg:col-span-8">
-              <img
-                data-expand-img
+            <div className="overflow-hidden rounded-lg lg:col-span-8">
+              <EditorialPhotoFrame
                 src={oohCityImg}
                 alt="Màn hình LED quảng cáo ngoài trời OOH tại trung tâm TP. Hồ Chí Minh do nền tảng Ad Canvas và Evo AdTracker của Evovi quản lý vận hành"
                 width={1600}
                 height={900}
-                loading="lazy"
-                className="aspect-[16/10] h-full w-full object-cover will-change-transform"
+                tag="OOH & Đội xe hiện trường"
+                caption="Điều phối vị trí LED đô thị, lịch booking và ảnh nghiệm thu trực tiếp"
+                aspectClassName="aspect-[16/10]"
+                imgDataAttr="expand"
               />
             </div>
-            <div className="relative overflow-hidden lg:col-span-4">
-              <img
-                data-expand-img
+            <div className="overflow-hidden rounded-lg lg:col-span-4">
+              <EditorialPhotoFrame
                 src={elevatorArchImg}
                 alt="Hệ thống thang máy lồng kính tại tòa nhà cao tầng được quản lý lắp đặt và bảo trì trên nền tảng Elevator360 của Evovi"
                 width={1080}
                 height={1440}
-                loading="lazy"
-                className="aspect-[4/5] h-full w-full object-cover will-change-transform"
+                tag="ERP Kỹ thuật công trình"
+                caption="Quản trị vòng đời lắp đặt & bảo trì định kỳ đa tòa nhà"
+                aspectClassName="aspect-[4/5]"
+                imgDataAttr="expand"
               />
             </div>
           </div>
 
           {/* Interactive 4-Flagship Split Stage */}
           <div className="mt-16 grid gap-10 lg:grid-cols-12 lg:items-start">
-            {/* Left 42% Index: Open architectural list, single active surface */}
+            {/* Left 42% Index: Semantic Tab Buttons with Clear Chevron Signifier */}
             <div className="lg:col-span-5">
               <p className="text-evo-body font-medium text-[#d6e2f5]">
                 Chọn cụm sản phẩm chủ lực để xem luồng vận hành trực tiếp:
               </p>
-              <div className="mt-5 space-y-2">
+              <div
+                className="mt-5 space-y-2"
+                role="tablist"
+                aria-label="Cụm sản phẩm chủ lực"
+              >
                 {FLAGSHIP_SLIDES.map((slide, idx) => {
                   const isSelected = idx === activeSlideIdx;
                   return (
                     <button
                       key={slide.id}
                       type="button"
+                      role="tab"
+                      aria-selected={isSelected}
                       onClick={() => setActiveSlideIdx(idx)}
-                      className={`group flex w-full items-center justify-between gap-4 border-l-4 px-5 py-4 text-left transition-colors duration-200 ${
+                      className={`group flex w-full cursor-pointer items-center justify-between gap-4 rounded-r-lg border-l-4 px-5 py-4 text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5ca4ff] ${
                         isSelected
-                          ? "border-[#247eff] bg-[#0d1b33] text-[#f5f8ff]"
-                          : "border-[#132747] bg-transparent text-[#9eb2d0] hover:border-[#5ca4ff] hover:text-[#f5f8ff]"
+                          ? "evo-surface-card border-l-[#247eff] text-[#f5f8ff]"
+                          : "border-l-[#132747] bg-transparent text-[#9eb2d0] hover:border-l-[#5ca4ff] hover:bg-[#0d1b33]/45 hover:text-[#f5f8ff]"
                       }`}
                     >
                       <div>
@@ -119,16 +149,14 @@ export function FlagshipShowcaseStage({
                           {slide.domain}
                         </div>
                       </div>
-                      <span
+                      <ChevronRight
                         aria-hidden="true"
-                        className={`text-evo-body font-bold transition-transform duration-200 ${
+                        className={`h-5 w-5 shrink-0 transition-transform duration-200 ${
                           isSelected
                             ? "translate-x-1 text-[#5ca4ff]"
                             : "text-[#9eb2d0] group-hover:translate-x-1"
                         }`}
-                      >
-                        →
-                      </span>
+                      />
                     </button>
                   );
                 })}
@@ -136,7 +164,8 @@ export function FlagshipShowcaseStage({
 
               <div
                 key={`summary-${currentSlide.id}`}
-                className="evo-panel-enter mt-8 rounded-lg bg-[#0d1b33] p-6"
+                data-ui="flagship-summary"
+                className="evo-panel-enter evo-surface-card mt-6 rounded-xl p-6"
               >
                 <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
                   {currentSlide.headline}
@@ -149,39 +178,40 @@ export function FlagshipShowcaseStage({
                   <div className="mt-6">
                     <Link
                       to={currentSlide.routeHref}
-                      className="inline-flex items-center gap-2 rounded-md bg-[#0b63e5] px-4 py-2.5 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff]"
+                      className="evo-btn-primary"
                     >
-                      {currentSlide.routeLabel} ↗
+                      <span>{currentSlide.routeLabel}</span>
+                      <ArrowUpRight className="h-5 w-5 shrink-0" aria-hidden="true" />
                     </Link>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Right 58% Live Product Telemetry */}
+            {/* Right 58% Live Product Telemetry with Progressive Blur Photo + Flipped Tonal Chips */}
             <div className="lg:col-span-7">
               <div
                 key={`telemetry-${currentSlide.id}`}
-                className="evo-panel-enter overflow-hidden rounded-lg bg-[#0d1b33]"
+                data-ui="flagship-telemetry-card"
+                className="evo-panel-enter evo-surface-card overflow-hidden rounded-xl"
               >
-                <div className="aspect-[16/9] w-full overflow-hidden bg-[#081224]">
-                  <img
-                    src={currentPhoto.src}
-                    alt={currentSlide.photoCaption}
-                    width={currentPhoto.width}
-                    height={currentPhoto.height}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
-                  />
-                </div>
+                <EditorialPhotoFrame
+                  src={currentPhoto.src}
+                  alt={currentSlide.photoCaption}
+                  width={currentPhoto.width}
+                  height={currentPhoto.height}
+                  tag={currentPhoto.tag}
+                  caption={currentSlide.photoCaption}
+                  aspectClassName="aspect-[16/9]"
+                />
 
-                {/* Compact cropped telemetry fragment (< 420px tall, zero headings inside) */}
                 <div data-ui="flagship-telemetry" className="p-6 md:p-8">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <span className="text-evo-small font-semibold text-[#f5f8ff]">
                       {currentSlide.livePanelTitle}
                     </span>
-                    <span className="rounded bg-[#34c759] px-3 py-1 text-evo-small font-bold text-[#050b16]">
+                    <span className="evo-chip-success text-evo-small font-semibold tabular-nums">
+                      <span className="h-2 w-2 rounded-full bg-[#6ee7b7]" />
                       {currentSlide.liveStatus}
                     </span>
                   </div>
@@ -190,23 +220,23 @@ export function FlagshipShowcaseStage({
                     {currentSlide.liveRows.map((row) => (
                       <div
                         key={row.label}
-                        className="flex flex-wrap items-center justify-between gap-3 rounded bg-[#132747] px-4 py-3.5"
+                        className="evo-surface-well flex flex-wrap items-center justify-between gap-3 rounded-lg px-4 py-3.5"
                       >
                         <div>
                           <div className="text-evo-body font-semibold text-[#f5f8ff]">
                             {row.label}
                           </div>
-                          <div className="mt-0.5 text-evo-small text-[#d6e2f5]">
+                          <div className="mt-0.5 text-evo-small text-[#9eb2d0]">
                             {row.meta}
                           </div>
                         </div>
                         <span
-                          className={`rounded px-3 py-1 text-evo-small font-semibold ${
+                          className={`text-evo-small font-semibold ${
                             row.tone === "emerald"
-                              ? "bg-[#34c759] text-[#050b16]"
+                              ? "evo-chip-success"
                               : row.tone === "orange"
-                                ? "bg-[#f5a623] text-[#050b16]"
-                                : "bg-[#0b63e5] text-white"
+                                ? "evo-chip-warning"
+                                : "evo-chip-info"
                           }`}
                         >
                           {row.state}
@@ -234,19 +264,20 @@ export function FlagshipShowcaseStage({
         </div>
       </section>
 
-      {/* PART B: COMPLETE 9-SYSTEM EVOVI-VN DIRECTORY ON UNIFIED DEEP NAVY BANDS */}
+      {/* PART B: COMPLETE 9-SYSTEM EVOVI-VN DIRECTORY (ANTI-SPREADSHEET HIERARCHY) */}
       <section
         id="ecosystem"
         className="bg-[#081224] pt-20 text-[#f5f8ff] md:pt-28"
       >
         <div className="container-evo pb-12">
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-5" data-section-sub>
+          {/* Pillar 2 & 3: H2 leads first on Mobile, 16px mobile proximity */}
+          <div className="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-8">
+            <div className="order-2 lg:order-1 lg:col-span-5" data-section-sub>
               <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                Lọc theo lĩnh vực để xem bài toán thực tế, kiến trúc kỹ thuật và quy mô phân hệ của toàn bộ 9 dòng sản phẩm thuộc tổ chức GitHub Evovi.
+                Lọc theo lĩnh vực để xem bối cảnh thực tế, kiến trúc kỹ thuật và chỉ số quy mô của toàn bộ 9 dòng sản phẩm thuộc tổ chức GitHub Evovi.
               </p>
             </div>
-            <div className="lg:col-span-7">
+            <div className="order-1 lg:order-2 lg:col-span-7">
               <h2
                 data-section-heading
                 className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
@@ -256,9 +287,9 @@ export function FlagshipShowcaseStage({
             </div>
           </div>
 
-          {/* Filter bar */}
+          {/* Pillar 1: Common-Region Segmented Filter Track */}
           <div
-            className="mt-10 flex flex-wrap gap-2.5"
+            className="evo-segmented-track mt-8 md:mt-10"
             role="tablist"
             aria-label="Lọc dự án theo lĩnh vực"
           >
@@ -270,19 +301,16 @@ export function FlagshipShowcaseStage({
                   type="button"
                   role="tab"
                   aria-selected={active}
+                  data-active={active ? "true" : "false"}
                   onClick={() => setActiveVertical(v.id)}
-                  className={`inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-evo-small font-semibold transition-colors ${
-                    active
-                      ? "bg-[#0b63e5] text-white"
-                      : "bg-[#0d1b33] text-[#d6e2f5] hover:bg-[#132747] hover:text-[#f5f8ff]"
-                  }`}
+                  className="evo-segmented-tab disabled:opacity-45"
                 >
                   <span>{v.label}</span>
                   <span
-                    className={`rounded px-2 py-0.5 text-evo-small font-bold tabular-nums ${
+                    className={`rounded-full px-2 py-0.5 text-evo-small font-bold tabular-nums ${
                       active
-                        ? "bg-[#050b16] text-[#f5f8ff]"
-                        : "bg-[#050b16] text-[#9eb2d0]"
+                        ? "bg-white/20 text-white"
+                        : "bg-[#0d1b33] text-[#9eb2d0]"
                     }`}
                   >
                     {v.count}
@@ -293,7 +321,7 @@ export function FlagshipShowcaseStage({
           </div>
         </div>
 
-        {/* Full-bleed Alternating Deep Navy Bands (100% viewport width, 42% internal axis, zero icon cards) */}
+        {/* Full-bleed Alternating Deep Navy Bands with Anti-Spreadsheet Flow Hierarchy (Pillar 2) */}
         <div>
           {filteredProjects.map((project, idx) => (
             <article
@@ -306,25 +334,31 @@ export function FlagshipShowcaseStage({
                 data-project-row
                 className="container-evo grid gap-8 lg:grid-cols-12"
               >
-                {/* Left of 42% axis (5 cols): Title FIRST, then domain & stack beneath */}
-                <div className="flex flex-col justify-between lg:col-span-5">
+                {/* Left of 42% axis (5 cols): Product Identity, Tonal Domain Badge & Tech Stack */}
+                <div className="flex flex-col justify-between gap-6 lg:col-span-5">
                   <div>
-                    <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className="evo-chip-info text-evo-small font-semibold">
+                        {project.verticalLabel}
+                      </span>
+                      <span className="text-evo-small font-semibold tabular-nums text-[#9eb2d0]">
+                        {project.repoClusterCount} kho mã chuyên biệt
+                      </span>
+                    </div>
+
+                    <h3 className="mt-3 font-display text-evo-h3 font-semibold text-[#f5f8ff]">
                       {project.name}
                     </h3>
-                    <p className="mt-1.5 text-evo-small font-semibold text-[#5ca4ff]">
-                      {project.verticalLabel} · {project.repoClusterCount} kho mã nguồn chuyên biệt
-                    </p>
-                    <p className="mt-3 max-w-[38ch] text-evo-body text-[#d6e2f5]">
+                    <p className="mt-2 max-w-[38ch] text-evo-body text-[#d6e2f5]">
                       {project.tagline}
                     </p>
                   </div>
 
-                  <div className="mt-6 flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {project.stack.map((tech) => (
                       <span
                         key={tech}
-                        className="rounded bg-[#0d1b33] px-3 py-1 text-evo-small font-medium text-[#d6e2f5]"
+                        className="rounded-md bg-[#0d1b33] px-3 py-1 text-evo-small font-medium text-[#d6e2f5]"
                       >
                         {tech}
                       </span>
@@ -332,63 +366,93 @@ export function FlagshipShowcaseStage({
                   </div>
                 </div>
 
-                {/* Right of 42% axis (7 cols): Narrative & Metrics */}
-                <div className="flex flex-col justify-between lg:col-span-7">
-                  <div className="space-y-4">
-                    <p className="max-w-[62ch] text-evo-body text-[#d6e2f5]">
-                      <strong className="font-semibold text-[#f5f8ff]">
-                        Bài toán:{" "}
-                      </strong>
-                      {project.problem}
-                    </p>
-                    <p className="max-w-[62ch] text-evo-body text-[#d6e2f5]">
-                      <strong className="font-semibold text-[#5ca4ff]">
-                        Giải pháp Evovi:{" "}
-                      </strong>
-                      {project.solution}
-                    </p>
-                    <p className="max-w-[62ch] text-evo-small text-[#9eb2d0]">
-                      {project.architectureNote}
-                    </p>
+                {/* Right of 42% axis (7 cols): Anti-Spreadsheet Connected Bottleneck -> Evovi Solution + Accent KPIs */}
+                <div
+                  data-ui="project-flow-card"
+                  className="flex flex-col justify-between gap-6 lg:col-span-7"
+                >
+                  {/* Top-Aligned Accent KPI Strip (Pillar 2: Pull key metrics into immediate visual focus) */}
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {project.metrics.map((m) => (
+                      <div
+                        key={m.label}
+                        className="evo-surface-card rounded-lg px-4 py-3"
+                      >
+                        <div className="font-display text-evo-body font-bold text-[#93c5fd] tabular-nums">
+                          {m.value}
+                        </div>
+                        <div className="mt-0.5 text-evo-small text-[#9eb2d0]">
+                          {m.label}
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-2">
-                    <div className="flex flex-wrap gap-6">
-                      {project.metrics.map((m) => (
-                        <div key={m.label} className="text-evo-small">
-                          <strong className="font-bold text-[#f5f8ff] tabular-nums">
-                            {m.value}
-                          </strong>{" "}
-                          <span className="text-[#9eb2d0]">{m.label}</span>
-                        </div>
-                      ))}
-                    </div>
+                  {/* Connected Bottleneck -> Solution Timeline (Zero literal "Bài toán:" / "Giải pháp:" prefixes) */}
+                  <div className="evo-surface-card rounded-xl p-5 md:p-6">
+                    <div className="relative space-y-5 pl-6">
+                      <div
+                        aria-hidden="true"
+                        className="absolute top-3 bottom-3 left-[7px] w-[2px] bg-[#193158]"
+                      />
 
-                    <div className="flex flex-wrap items-center gap-4">
+                      <div className="relative">
+                        <span
+                          aria-hidden="true"
+                          className="absolute top-2 -left-6 h-3.5 w-3.5 rounded-full border-2 border-[#fcd34d] bg-[#050b16]"
+                        />
+                        <p className="max-w-[60ch] text-evo-body text-[#9eb2d0]">
+                          {project.problem}
+                        </p>
+                      </div>
+
+                      <div className="relative">
+                        <span
+                          aria-hidden="true"
+                          className="absolute top-2 -left-6 h-3.5 w-3.5 rounded-full bg-[#34c759]"
+                        />
+                        <p className="max-w-[60ch] text-evo-body font-medium text-[#f5f8ff]">
+                          {project.solution}
+                        </p>
+                        <p className="mt-2 max-w-[60ch] text-evo-small text-[#93c5fd]">
+                          {project.architectureNote}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Row: Ghost Secondary Links + 2:1 Primary Consultation Trigger */}
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       {project.href && project.hrefLabel && (
                         <Link
                           to={project.href}
-                          className="text-evo-small font-semibold text-[#5ca4ff] hover:underline"
+                          className="evo-btn-ghost evo-btn-sm"
                         >
-                          {project.hrefLabel} ↗
+                          <span>{project.hrefLabel}</span>
+                          <ArrowUpRight className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden="true" />
                         </Link>
                       )}
                       {project.secondaryHref && project.secondaryLabel && (
                         <Link
                           to={project.secondaryHref}
-                          className="text-evo-small font-medium text-[#d6e2f5] hover:text-[#f5f8ff] hover:underline"
+                          className="text-evo-small font-medium text-[#9eb2d0] transition-colors hover:text-[#f5f8ff] hover:underline"
                         >
                           {project.secondaryLabel}
                         </Link>
                       )}
-                      <a
-                        href="#contact"
-                        onClick={() => onSelectProjectScope(project.scopePreset)}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-[#0b63e5] px-4 py-2 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff]"
-                      >
-                        Tư vấn mô hình này →
-                      </a>
                     </div>
+
+                    <a
+                      href="#contact"
+                      onClick={() =>
+                        onSelectProjectScope(project.scopePreset, project.name)
+                      }
+                      className="evo-btn-primary"
+                    >
+                      <span>Tư vấn mô hình này</span>
+                      <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
+                    </a>
                   </div>
                 </div>
               </div>

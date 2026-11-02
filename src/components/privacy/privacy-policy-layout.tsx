@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { Building2, Globe, Mail, Phone } from "lucide-react";
+import { ArrowRight, Building2, Globe, Mail, Phone } from "lucide-react";
 import { EvoviLogoIcon } from "@/components/EvoviLogoIcon";
+import { CopyContactChip } from "@/components/ui/CopyContactChip";
 import type { PrivacyPolicyContent } from "./types";
 
 const CONTACT = {
   company: "Evovi",
   hotline: "0868661235",
+  hotlineDisplay: "0868 661 235",
   website: "https://evovi.vn",
 } as const;
 
@@ -18,21 +20,24 @@ type PrivacyPolicyLayoutProps = {
 export function PrivacyPolicyLayout({ content, children }: PrivacyPolicyLayoutProps) {
   return (
     <div className="flex min-h-svh flex-col bg-[#050b16] text-[#d6e2f5]">
-      <header className="sticky top-0 z-50 bg-[#050b16] text-[#f5f8ff]">
+      <header
+        data-ui="privacy-header"
+        className="evo-header-glass sticky top-0 z-50 text-[#f5f8ff]"
+      >
         <div className="mx-auto flex h-16 max-w-[920px] items-center justify-between gap-2.5 px-5 sm:gap-4 md:px-8">
           <div className="flex items-center gap-3 sm:gap-4">
             <Link to="/" aria-label="Trang chủ Evovi" className="shrink-0">
               <EvoviLogoIcon size="sm" />
             </Link>
-            <span className="whitespace-nowrap font-display text-evo-small font-bold tracking-tight text-[#5ca4ff] sm:text-lg">
+            <span className="whitespace-nowrap font-display text-evo-small font-bold tracking-tight text-[#5ca4ff] sm:text-evo-body">
               {content.appName}
             </span>
           </div>
-          <Link
-            to="/"
-            className="shrink-0 whitespace-nowrap rounded-md bg-[#0b63e5] px-3 py-2 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff] sm:px-3.5"
-          >
-            Về Evovi<span className="hidden sm:inline">.vn</span> →
+          <Link to="/" className="evo-btn-primary evo-btn-sm shrink-0 whitespace-nowrap">
+            <span>
+              Về Evovi<span className="hidden sm:inline">.vn</span>
+            </span>
+            <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
           </Link>
         </div>
       </header>
@@ -45,37 +50,26 @@ export function PrivacyPolicyLayout({ content, children }: PrivacyPolicyLayoutPr
           <p className="mt-4 max-w-[54ch] text-evo-small text-[#d6e2f5]">
             {content.footerTagline}
           </p>
-          <ul className="mt-5 space-y-2.5 text-evo-small">
-            <li className="flex items-center gap-2.5">
-              <Building2 className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden />
-              <span className="text-[#f5f8ff]">Công ty: {CONTACT.company}</span>
-            </li>
-            <li className="flex items-center gap-2.5">
-              <Phone className="h-4 w-4 shrink-0 text-[#34c759]" aria-hidden />
-              <span>
-                Hotline 24/7:{" "}
-                <a
-                  href={`tel:${CONTACT.hotline}`}
-                  className="text-[#f5f8ff] underline-offset-4 hover:text-[#5ca4ff] hover:underline"
-                >
-                  {CONTACT.hotline}
-                </a>
-              </span>
-            </li>
-            <li className="flex items-center gap-2.5">
-              <Mail className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden />
-              <span>
-                Email:{" "}
-                <a
-                  href={`mailto:${content.supportEmail}`}
-                  className="text-[#f5f8ff] underline-offset-4 hover:text-[#5ca4ff] hover:underline"
-                >
-                  {content.supportEmail}
-                </a>
-              </span>
-            </li>
-            <li className="flex items-center gap-2.5">
-              <Globe className="h-4 w-4 shrink-0 text-[#f5a623]" aria-hidden />
+          <div className="mt-5 space-y-3 text-evo-small">
+            <div className="flex items-center gap-2.5">
+              <Building2 className="h-5 w-5 shrink-0 text-[#5ca4ff]" aria-hidden="true" />
+              <span className="font-medium text-[#f5f8ff]">{CONTACT.company} · Việt Nam</span>
+            </div>
+            <CopyContactChip
+              icon={<Phone className="h-5 w-5 shrink-0 text-[#6ee7b7]" aria-hidden="true" />}
+              href={`tel:${CONTACT.hotline}`}
+              displayValue={CONTACT.hotlineDisplay}
+              copyValue={CONTACT.hotline}
+              note="24/7"
+            />
+            <CopyContactChip
+              icon={<Mail className="h-5 w-5 shrink-0 text-[#5ca4ff]" aria-hidden="true" />}
+              href={`mailto:${content.supportEmail}`}
+              displayValue={content.supportEmail}
+              copyValue={content.supportEmail}
+            />
+            <div className="flex items-center gap-2.5">
+              <Globe className="h-5 w-5 shrink-0 text-[#fcd34d]" aria-hidden="true" />
               <a
                 href={CONTACT.website}
                 target="_blank"
@@ -84,9 +78,9 @@ export function PrivacyPolicyLayout({ content, children }: PrivacyPolicyLayoutPr
               >
                 {CONTACT.website}
               </a>
-            </li>
-          </ul>
-          <p className="mt-8 text-xs text-[#9eb2d0]">
+            </div>
+          </div>
+          <p className="mt-8 text-evo-small text-[#9eb2d0]">
             © {new Date().getFullYear()} Evovi. Bảo lưu mọi quyền.
           </p>
         </div>
@@ -102,16 +96,19 @@ type PrivacyPolicyDocumentProps = {
 export function PrivacyPolicyDocument({ content }: PrivacyPolicyDocumentProps) {
   return (
     <article className="mx-auto max-w-[920px]">
-      <div className="rounded-lg bg-[#081224] px-6 py-8 md:px-10 md:py-12">
-        <header className="rounded-md bg-[#0d1b33] p-6 md:p-8">
-          <p className="text-evo-small font-semibold text-[#5ca4ff]">
+      <div
+        data-ui="privacy-doc"
+        className="evo-surface-card rounded-xl bg-[#081224] px-6 py-8 md:px-10 md:py-12"
+      >
+        <header className="evo-surface-card rounded-xl p-6 md:p-8">
+          <span className="evo-chip-info text-evo-small font-semibold">
             Evovi · Tài liệu pháp lý sản phẩm
-          </p>
-          <h1 className="mt-2 font-display text-evo-h2 font-bold text-[#f5f8ff]">
+          </span>
+          <h1 className="mt-3 font-display text-evo-h2 font-bold text-[#f5f8ff]">
             Chính sách quyền riêng tư · {content.appName}
           </h1>
           <p className="mt-3 text-evo-small font-medium tabular-nums text-[#9eb2d0]">
-            Có hiệu lực: {content.effectiveDate}
+            Có hiệu lực từ {content.effectiveDate}
             {content.packageId ? ` · ${content.packageId}` : ""}
           </p>
           <p className="mt-5 max-w-[62ch] text-evo-body text-[#d6e2f5]">
@@ -146,40 +143,35 @@ export function PrivacyPolicyDocument({ content }: PrivacyPolicyDocumentProps) {
 
               {section.items && (
                 <ul className="mt-4 list-disc space-y-2.5 pl-5 text-evo-body text-[#d6e2f5] marker:text-[#5ca4ff]">
-                  {section.items.map((item) => (
-                    <li key={item} className="max-w-[62ch]">
-                      {item}
+                  {section.items.map((point) => (
+                    <li key={point} className="max-w-[62ch]">
+                      {point}
                     </li>
                   ))}
                 </ul>
               )}
 
               {section.contact && (
-                <ul className="mt-5 space-y-2 rounded-md bg-[#0d1b33] p-5 text-evo-body text-[#d6e2f5]">
-                  <li>
-                    <span className="font-semibold text-[#f5f8ff]">Công ty:</span>{" "}
-                    {CONTACT.company}
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[#f5f8ff]">Hotline 24/7:</span>{" "}
-                    <a
-                      href={`tel:${CONTACT.hotline}`}
-                      className="text-[#5ca4ff] underline-offset-4 hover:underline"
-                    >
-                      {CONTACT.hotline}
-                    </a>
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[#f5f8ff]">Email:</span>{" "}
-                    <a
-                      href={`mailto:${content.supportEmail}`}
-                      className="text-[#5ca4ff] underline-offset-4 hover:underline"
-                    >
-                      {content.supportEmail}
-                    </a>
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[#f5f8ff]">Website:</span>{" "}
+                <div className="evo-surface-card mt-5 space-y-3 rounded-xl p-5 text-evo-body text-[#d6e2f5]">
+                  <div className="flex items-center gap-2.5">
+                    <Building2 className="h-5 w-5 shrink-0 text-[#5ca4ff]" aria-hidden="true" />
+                    <span className="font-semibold text-[#f5f8ff]">{CONTACT.company}</span>
+                  </div>
+                  <CopyContactChip
+                    icon={<Phone className="h-5 w-5 shrink-0 text-[#6ee7b7]" aria-hidden="true" />}
+                    href={`tel:${CONTACT.hotline}`}
+                    displayValue={CONTACT.hotlineDisplay}
+                    copyValue={CONTACT.hotline}
+                    note="24/7"
+                  />
+                  <CopyContactChip
+                    icon={<Mail className="h-5 w-5 shrink-0 text-[#5ca4ff]" aria-hidden="true" />}
+                    href={`mailto:${content.supportEmail}`}
+                    displayValue={content.supportEmail}
+                    copyValue={content.supportEmail}
+                  />
+                  <div className="flex items-center gap-2.5">
+                    <Globe className="h-5 w-5 shrink-0 text-[#fcd34d]" aria-hidden="true" />
                     <a
                       href={CONTACT.website}
                       target="_blank"
@@ -188,8 +180,8 @@ export function PrivacyPolicyDocument({ content }: PrivacyPolicyDocumentProps) {
                     >
                       {CONTACT.website}
                     </a>
-                  </li>
-                </ul>
+                  </div>
+                </div>
               )}
             </section>
           ))}

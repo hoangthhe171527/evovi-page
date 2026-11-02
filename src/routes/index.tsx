@@ -9,17 +9,25 @@ import {
 } from "@/components/landing/EvoviSignalCanvas";
 import { SystemTransformerStage } from "@/components/landing/SystemTransformerStage";
 import { FlagshipShowcaseStage } from "@/components/landing/FlagshipShowcaseStage";
+import { CopyContactChip } from "@/components/ui/CopyContactChip";
+import { EditorialPhotoFrame } from "@/components/ui/EditorialPhotoFrame";
 import {
   CAPABILITIES,
   DELIVERY_STEPS,
   EVOVI_PROJECTS,
   TRANSFORMATION_BEATS,
 } from "@/data/evovi-projects";
-import { buildSeoHead, SITE_URL } from "@/lib/seo";
+import { buildHomeJsonLd, buildSeoHead } from "@/lib/seo";
 import studioBlueprintImg from "@/assets/evovi-studio-blueprint.jpg";
 import factoryOpsImg from "@/assets/evovi-factory-ops.jpg";
 import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowRight,
+  Check,
   CheckCircle2,
+  ChevronDown,
+  ChevronRight,
   Mail,
   MapPin,
   Menu,
@@ -27,68 +35,7 @@ import {
   X,
 } from "lucide-react";
 
-const HOME_JSON_LD = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": `${SITE_URL}/#organization`,
-    name: "Evovi",
-    url: `${SITE_URL}/`,
-    logo: `${SITE_URL}/icon-512.png`,
-    email: "kinhdoanh@evovi.vn",
-    telephone: "+84-868-661-235",
-    description:
-      "Evovi là studio kỹ thuật phần mềm Spec-Driven & AI-Native chuyên tư vấn, thiết kế và xây dựng hệ thống ERP, LMS, OOH, ứng dụng di động hiện trường và tác nhân AI cho doanh nghiệp tại Việt Nam.",
-    areaServed: "VN",
-    address: [
-      { "@type": "PostalAddress", addressLocality: "Hà Nội", addressCountry: "VN" },
-      { "@type": "PostalAddress", addressLocality: "TP. Hồ Chí Minh", addressCountry: "VN" },
-    ],
-    contactPoint: [
-      {
-        "@type": "ContactPoint",
-        telephone: "+84-868-661-235",
-        email: "kinhdoanh@evovi.vn",
-        contactType: "sales",
-        availableLanguage: ["Vietnamese", "English"],
-      },
-      {
-        "@type": "ContactPoint",
-        email: "support@evovi.vn",
-        contactType: "customer support",
-        availableLanguage: ["Vietnamese"],
-      },
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${SITE_URL}/#website`,
-    url: `${SITE_URL}/`,
-    name: "Evovi",
-    inLanguage: "vi-VN",
-    publisher: { "@id": `${SITE_URL}/#organization` },
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "Hệ sinh thái sản phẩm và dự án phần mềm thực tế của Evovi",
-    numberOfItems: EVOVI_PROJECTS.length,
-    itemListElement: EVOVI_PROJECTS.map((p, idx) => ({
-      "@type": "ListItem",
-      position: idx + 1,
-      item: {
-        "@type": "SoftwareApplication",
-        name: p.name,
-        applicationCategory: "BusinessApplication",
-        operatingSystem: "Web, iOS, Android",
-        description: `${p.tagline}. ${p.solution}`,
-        url: p.href ? `${SITE_URL}${p.href}` : `${SITE_URL}/#ecosystem`,
-        author: { "@id": `${SITE_URL}/#organization` },
-      },
-    })),
-  },
-];
+const HOME_JSON_LD = buildHomeJsonLd(EVOVI_PROJECTS);
 
 export const Route = createFileRoute("/")({
   head: () =>
@@ -108,6 +55,14 @@ const SCOPE_PRESETS = [
   "Hệ thống OOH / Đội xe / App kỹ thuật hiện trường",
   "Số hóa học liệu EdTech & Tác nhân AI doanh nghiệp",
 ] as const;
+
+const PERSONAL_EMAIL_DOMAINS = new Set([
+  "gmail.com",
+  "yahoo.com",
+  "hotmail.com",
+  "outlook.com",
+  "icloud.com",
+]);
 
 const RIBBON_ITEMS_A = [
   "Ad Canvas OOH",
@@ -141,25 +96,132 @@ const CHAPTER_LABELS = [
   "Tư vấn triển khai",
 ] as const;
 
+type FormFields = {
+  name: string;
+  company: string;
+  email: string;
+  phone: string;
+  role: string;
+};
+
+type FormErrors = Partial<Record<keyof FormFields | "need", string>>;
+
+function isPersonalEmail(email: string): boolean {
+  const parts = email.trim().toLowerCase().split("@");
+  if (parts.length !== 2) return false;
+  return PERSONAL_EMAIL_DOMAINS.has(parts[1]);
+}
+
 function EvoviLandingPage() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
   const heroScrollProgressRef = useRef<number>(0);
   const ribbonARef = useRef<HTMLDivElement | null>(null);
   const ribbonBRef = useRef<HTMLDivElement | null>(null);
+  const scopeToastTimerRef = useRef<number | null>(null);
+  const submitTimerRef = useRef<number | null>(null);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeChapter, setActiveChapter] = useState(0);
   const [activeBeatIndex, setActiveBeatIndex] = useState(0);
   const [activeCapabilityIdx, setActiveCapabilityIdx] = useState(0);
+
+  const [fields, setFields] = useState<FormFields>({
+    name: "",
+    company: "",
+    email: "",
+    phone: "",
+    role: "",
+  });
   const [needText, setNeedText] = useState("");
-  const [selectedPreset, setSelectedPreset] = useState<string>(SCOPE_PRESETS[0]);
+  const [selectedPreset, setSelectedPreset] = useState<string>("");
+  const [scopeToast, setScopeToast] = useState<string | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [dismissedEmailWarn, setDismissedEmailWarn] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSelectProjectScope = (preset: string) => {
+  useEffect(() => {
+    return () => {
+      if (scopeToastTimerRef.current !== null) {
+        window.clearTimeout(scopeToastTimerRef.current);
+      }
+      if (submitTimerRef.current !== null) {
+        window.clearTimeout(submitTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleSelectProjectScope = (preset: string, projectName?: string) => {
     setSelectedPreset(preset);
-    setNeedText(preset);
+    const scopeLine = projectName
+      ? `Quan tâm mô hình ${projectName} (${preset})`
+      : `Phạm vi quan tâm: ${preset}`;
+
+    setNeedText((prev) => {
+      const trimmed = prev.trim();
+      if (!trimmed) return `${scopeLine}. `;
+      const withoutOldPrefix = trimmed
+        .replace(/^(Quan tâm mô hình [^\n.]+|Phạm vi quan tâm: [^\n.]+)\.\s*/i, "")
+        .trim();
+      return withoutOldPrefix
+        ? `${scopeLine}. ${withoutOldPrefix}`
+        : `${scopeLine}. `;
+    });
+
+    setErrors((prev) => ({ ...prev, need: undefined }));
+    setScopeToast(projectName ? `Đã điền sẵn mô hình ${projectName}` : "Đã chèn phạm vi vào mô tả nhu cầu");
+    if (scopeToastTimerRef.current !== null) {
+      window.clearTimeout(scopeToastTimerRef.current);
+    }
+    scopeToastTimerRef.current = window.setTimeout(() => {
+      setScopeToast(null);
+    }, 3200);
   };
+
+  const validateForm = (): FormErrors => {
+    const next: FormErrors = {};
+    if (fields.name.trim().length < 2) {
+      next.name = "Vui lòng nhập họ và tên liên hệ.";
+    }
+    if (fields.company.trim().length < 2) {
+      next.company = "Vui lòng nhập tên doanh nghiệp hoặc tổ chức.";
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(fields.email.trim())) {
+      next.email = "Email chưa đúng định dạng (ví dụ: ban@doanhnghiep.vn).";
+    }
+    const digits = fields.phone.replace(/\D/g, "");
+    if (digits.length < 9 || digits.length > 15) {
+      next.phone = "Số điện thoại cần từ 9 đến 11 chữ số để kỹ sư liên hệ.";
+    }
+    if (!fields.role) {
+      next.role = "Vui lòng chọn vai trò công việc của bạn.";
+    }
+    if (needText.trim().length < 8) {
+      next.need = "Hãy mô tả ngắn điểm nghẽn hoặc bấm chọn nhanh một phạm vi bên trái.";
+    }
+    return next;
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+    setIsSubmitting(true);
+    submitTimerRef.current = window.setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }, 460);
+  };
+
+  const showPersonalEmailWarning =
+    !errors.email &&
+    !dismissedEmailWarn &&
+    isPersonalEmail(fields.email);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -184,7 +246,6 @@ function EvoviLandingPage() {
     }
 
     const ctx = gsap.context(() => {
-      // 0. Global Enterprise Signal Progress Thread
       if (progressBarRef.current) {
         gsap.set(progressBarRef.current, { scaleX: 0, transformOrigin: "left center" });
         ScrollTrigger.create({
@@ -199,7 +260,6 @@ function EvoviLandingPage() {
         });
       }
 
-      // Chapter indicator sync
       const chapterSections = gsap.utils.toArray<HTMLElement>("[data-chapter]", rootEl);
       chapterSections.forEach((sec, idx) => {
         ScrollTrigger.create({
@@ -213,7 +273,6 @@ function EvoviLandingPage() {
 
       if (reducedMotion) return;
 
-      // 1. Act I: Crisp masked hero headline entrance (< 0.55s) + scroll-out topology convergence
       const heroLines = gsap.utils.toArray<HTMLElement>("[data-hero-line]", rootEl);
       const heroMeta = gsap.utils.toArray<HTMLElement>("[data-hero-fade]", rootEl);
 
@@ -267,7 +326,6 @@ function EvoviLandingPage() {
         },
       );
 
-      // 1b. Chained Section Headings & Supporting Copy Reveals across all acts
       const sectionHeadings = gsap.utils.toArray<HTMLElement>(
         "[data-section-heading]",
         rootEl,
@@ -309,7 +367,6 @@ function EvoviLandingPage() {
         );
       });
 
-      // 2. Act II: Continuous vertical conduit + active beat sync
       gsap.fromTo(
         "[data-act2-conduit]",
         { scaleY: 0.08, transformOrigin: "top center" },
@@ -336,7 +393,6 @@ function EvoviLandingPage() {
         });
       });
 
-      // 3. Act III: Scroll-scrubbed Luminous Ink-Fill Manifesto + Mosaic Parallax + Capability reveals
       const inkSpans = gsap.utils.toArray<HTMLElement>("[data-ink-phrase]", rootEl);
       if (inkSpans.length > 0) {
         gsap.fromTo(
@@ -423,7 +479,6 @@ function EvoviLandingPage() {
         );
       });
 
-      // 4. Act IV: Scrubbed Inner Image Zoom inside Dual-Photo Architectural Window + 9-System Rows
       const expandImgs = gsap.utils.toArray<HTMLElement>("[data-expand-img]", rootEl);
       if (expandImgs.length > 0) {
         gsap.fromTo(
@@ -461,7 +516,6 @@ function EvoviLandingPage() {
         );
       });
 
-      // 5. Act V: 6-Step Spec-Driven Conduit Scrub
       gsap.fromTo(
         "[data-process-conduit]",
         { scaleY: 0.06, transformOrigin: "top center" },
@@ -497,7 +551,6 @@ function EvoviLandingPage() {
       });
     }, rootEl);
 
-    // Velocity-reactive counter-scrolling enterprise ribbons (compositor translate3d only)
     if (!reducedMotion) {
       let posA = 0;
       let posB = -50;
@@ -515,7 +568,7 @@ function EvoviLandingPage() {
         if (posA <= -50) posA += 50;
         if (posA > 0) posA -= 50;
         if (posB >= 0) posB -= 50;
-        if (posB < -50) posB += 50;
+        if (posB < -50) posB -= 50;
 
         if (ribbonARef.current) {
           ribbonARef.current.style.transform = `translate3d(${posA.toFixed(3)}%, 0, 0)`;
@@ -536,57 +589,65 @@ function EvoviLandingPage() {
   }, []);
 
   const navItems = [
-    { href: "#solution", label: "Chuyển đổi" },
-    { href: "#services", label: "Năng lực" },
-    { href: "#cases", label: "Tiêu biểu" },
-    { href: "#ecosystem", label: "9 Dự án Evovi" },
-    { href: "#process", label: "Quy trình" },
+    { href: "#solution", label: "Chuyển đổi", chapter: 1 },
+    { href: "#services", label: "Năng lực", chapter: 2 },
+    { href: "#cases", label: "Tiêu biểu", chapter: 3 },
+    { href: "#ecosystem", label: "9 Dự án Evovi", chapter: 3 },
+    { href: "#process", label: "Quy trình", chapter: 4 },
   ];
 
   return (
     <div ref={rootRef} className="min-h-svh bg-[#050b16] text-[#d6e2f5]">
-      {/* PERSISTENT ENTERPRISE HEADER + SIGNAL PROGRESS THREAD */}
-      <header className="fixed inset-x-0 top-0 z-50 bg-[#050b16] text-[#f5f8ff]">
+      {/* PERSISTENT GLASS ENTERPRISE HEADER + ACTIVE SECTION SIGNIFIER */}
+      <header
+        data-ui="site-header"
+        className="evo-header-glass fixed inset-x-0 top-0 z-50 text-[#f5f8ff]"
+      >
         <div className="container-evo flex h-16 items-center justify-between gap-3">
           <div className="flex items-center gap-5">
             <a href="#top" aria-label="Trang chủ Evovi" className="inline-flex items-center">
               <EvoviLogoIcon size="sm" />
             </a>
             <span className="hidden text-evo-small font-medium text-[#9eb2d0] xl:inline-block">
-              Mạch kiến trúc: {CHAPTER_LABELS[activeChapter]}
+              {CHAPTER_LABELS[activeChapter]}
             </span>
           </div>
 
           <nav
             aria-label="Điều hướng chính"
-            className="hidden items-center gap-7 text-evo-small font-medium text-[#d6e2f5] lg:flex"
+            className="hidden items-center gap-1.5 text-evo-small font-medium lg:flex"
           >
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="transition-colors hover:text-[#5ca4ff]"
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const isCurrent =
+                activeChapter === item.chapter && item.href !== "#ecosystem";
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className={`rounded-md px-3 py-1.5 transition-colors ${
+                    isCurrent
+                      ? "bg-[#132747]/85 text-[#f5f8ff]"
+                      : "text-[#9eb2d0] hover:bg-[#0d1b33] hover:text-[#f5f8ff]"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-1.5 rounded-md bg-[#0b63e5] px-3.5 py-2 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff] sm:px-4"
-            >
+            <a href="#contact" className="evo-btn-primary evo-btn-sm">
               <span>Nhận tư vấn</span>
               <span className="hidden sm:inline">kỹ thuật</span>
-              <span aria-hidden="true">→</span>
+              <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
             </a>
             <button
               type="button"
               aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
               aria-expanded={mobileMenuOpen}
               onClick={() => setMobileMenuOpen((v) => !v)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#0d1b33] text-[#f5f8ff] lg:hidden"
+              className="evo-btn-ghost inline-flex h-10 w-10 items-center justify-center rounded-md p-0 lg:hidden"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -594,7 +655,7 @@ function EvoviLandingPage() {
         </div>
 
         {/* Continuous Tri-Spectrum Scroll Progress Thread */}
-        <div className="h-[3px] w-full bg-[#0d1b33]">
+        <div className="h-[3px] w-full bg-[#0d1b33]/75">
           <div
             ref={progressBarRef}
             className="grid h-full w-full grid-cols-3 will-change-transform"
@@ -607,13 +668,13 @@ function EvoviLandingPage() {
 
         {mobileMenuOpen && (
           <div className="bg-[#0d1b33] px-5 py-5 lg:hidden">
-            <div className="flex flex-col gap-3.5 text-evo-body font-medium text-[#f5f8ff]">
+            <div className="flex flex-col gap-3 text-evo-body font-medium text-[#f5f8ff]">
               {navItems.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-1 text-[#f5f8ff]"
+                  className="rounded-md px-2 py-1.5 text-[#f5f8ff] hover:bg-[#132747]"
                 >
                   {item.label}
                 </a>
@@ -621,9 +682,10 @@ function EvoviLandingPage() {
               <a
                 href="#contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-[#0b63e5] px-4 py-3 text-evo-small font-semibold text-white"
+                className="evo-btn-primary mt-2 w-full"
               >
-                Đặt lịch tư vấn giải pháp →
+                <span>Đặt lịch tư vấn giải pháp</span>
+                <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -637,16 +699,19 @@ function EvoviLandingPage() {
         <section
           data-chapter="0"
           data-hero-stage
-          className="relative flex min-h-svh flex-col justify-between overflow-hidden bg-[#050b16] pt-22 pb-10 text-[#f5f8ff] md:pt-28 md:pb-14"
+          className="relative flex min-h-svh flex-col justify-between overflow-hidden bg-[#050b16] pt-24 pb-10 text-[#f5f8ff] md:pt-28 md:pb-14"
         >
           <HeroTriSpectrumCanvas scrollProgressRef={heroScrollProgressRef} />
 
-          {/* Upper masthead coordinate bar aligned symmetrically on container margins */}
+          {/* Upper masthead coordinate bar */}
           <div className="container-evo relative z-10">
             <div className="grid gap-3 lg:grid-cols-12 lg:items-center">
               <div className="lg:col-span-5" data-hero-fade>
-                <span className="inline-flex items-center gap-2.5 rounded-md bg-[#0d1b33] px-3.5 py-1.5 text-evo-small font-medium text-[#f5f8ff]">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#34c759]" />
+                <span
+                  data-ui="hero-pill"
+                  className="evo-surface-card inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-evo-small font-medium text-[#f5f8ff]"
+                >
+                  <span className="h-2 w-2 rounded-full bg-[#6ee7b7]" />
                   Evovi Engineering · Hà Nội & TP. Hồ Chí Minh
                 </span>
               </div>
@@ -661,24 +726,19 @@ function EvoviLandingPage() {
           {/* Statement anchored to lower third on 42% axis */}
           <div className="container-evo relative z-10 mt-10 md:mt-24">
             <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-              {/* Left of 42% axis */}
+              {/* Left of 42% axis: Lead Subtext + 2:1 Primary & Ghost Secondary CTA Row */}
               <div className="order-2 lg:order-1 lg:col-span-5" data-hero-fade>
                 <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
                   Evovi thiết kế và xây dựng phần mềm khớp trọn vẹn quy trình doanh nghiệp bạn vận hành, từ cổng quản trị Web đến ứng dụng hiện trường và tác nhân AI.
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a
-                    href="#contact"
-                    className="inline-flex items-center gap-2 rounded-md bg-[#0b63e5] px-5 py-3 text-evo-small font-semibold text-white transition-colors hover:bg-[#247eff] sm:px-6 sm:py-3.5"
-                  >
-                    Nhận tư vấn & phác thảo giải pháp →
+                  <a href="#contact" className="evo-btn-primary evo-btn-lg">
+                    <span>Nhận tư vấn giải pháp</span>
+                    <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
                   </a>
-                  <a
-                    href="#ecosystem"
-                    className="inline-flex items-center gap-2 rounded-md bg-[#0d1b33] px-5 py-3 text-evo-small font-semibold text-[#f5f8ff] transition-colors hover:bg-[#132747] sm:py-3.5"
-                  >
-                    Xem 9 hệ thống thực tế
+                  <a href="#ecosystem" className="evo-btn-ghost evo-btn-lg">
+                    <span>Xem 9 hệ thống thực tế</span>
                   </a>
                 </div>
               </div>
@@ -698,10 +758,11 @@ function EvoviLandingPage() {
                   </span>
                 </h1>
 
-                {/* Executive programme metrics strip */}
+                {/* Executive programme metrics strip with dark surface specular rim */}
                 <div
                   data-hero-fade
-                  className="mt-8 grid grid-cols-3 gap-4 rounded-lg bg-[#0d1b33] p-4 sm:gap-6 sm:p-5"
+                  data-ui="hero-metrics"
+                  className="evo-surface-card mt-8 grid grid-cols-3 gap-4 rounded-xl p-4 sm:gap-6 sm:p-5"
                 >
                   <div>
                     <div className="font-display text-evo-h3 font-bold text-[#f5f8ff] tabular-nums">
@@ -720,7 +781,7 @@ function EvoviLandingPage() {
                     </div>
                   </div>
                   <div>
-                    <div className="font-display text-evo-h3 font-bold text-[#34c759] tabular-nums">
+                    <div className="font-display text-evo-h3 font-bold text-[#6ee7b7] tabular-nums">
                       24/7 SLA
                     </div>
                     <div className="mt-1 text-evo-small text-[#9eb2d0]">
@@ -757,13 +818,14 @@ function EvoviLandingPage() {
           className="bg-[#081224] py-20 text-[#f5f8ff] md:py-28"
         >
           <div className="container-evo">
-            <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-              <div className="lg:col-span-5" data-section-sub>
+            {/* Pillar 2 & 3: H2 leads on mobile, 16px mobile proximity */}
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-8">
+              <div className="order-2 lg:order-1 lg:col-span-5" data-section-sub>
                 <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
                   Đa số doanh nghiệp chậm lại không phải vì đội ngũ thiếu nỗ lực, mà vì công cụ hiện tại rời rạc so với tốc độ phát triển thực tế.
                 </p>
               </div>
-              <div className="lg:col-span-7">
+              <div className="order-1 lg:order-2 lg:col-span-7">
                 <h2
                   data-section-heading
                   className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
@@ -773,8 +835,8 @@ function EvoviLandingPage() {
               </div>
             </div>
 
-            <div className="mt-14 grid gap-10 lg:grid-cols-12 lg:items-start">
-              {/* Left 42%: Open architectural list along scrubbed vertical conduit */}
+            <div className="mt-12 grid gap-10 md:mt-14 lg:grid-cols-12 lg:items-start">
+              {/* Left 42%: Semantic Interactive Buttons along scrubbed vertical conduit */}
               <div data-act2-list className="relative pl-6 lg:col-span-5">
                 <div className="absolute top-2 bottom-2 left-0 w-[3px] bg-[#132747]">
                   <div
@@ -783,30 +845,49 @@ function EvoviLandingPage() {
                   />
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-3" role="tablist" aria-label="Điểm nghẽn vận hành">
                   {TRANSFORMATION_BEATS.map((beat, idx) => {
                     const active = idx === activeBeatIndex;
                     return (
-                      <div
+                      <button
                         key={beat.painTitle}
+                        type="button"
+                        role="tab"
+                        aria-selected={active}
                         data-beat-item
+                        data-ui="beat-trigger"
                         onClick={() => setActiveBeatIndex(idx)}
-                        className={`cursor-pointer rounded-md transition-colors duration-200 ${
+                        className={`group block w-full cursor-pointer rounded-xl text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5ca4ff] ${
                           active
-                            ? "bg-[#0d1b33] p-6"
-                            : "bg-transparent py-3 pr-4 pl-2 hover:bg-[#0d1b33]/50"
+                            ? "evo-surface-card p-5 md:p-6"
+                            : "bg-transparent px-4 py-3.5 hover:bg-[#0d1b33]/55"
                         }`}
                       >
-                        <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
-                          {beat.painTitle}
-                        </h3>
+                        <div className="flex items-start justify-between gap-3">
+                          <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
+                            {beat.painTitle}
+                          </h3>
+                          <ChevronRight
+                            aria-hidden="true"
+                            className={`mt-1 h-5 w-5 shrink-0 transition-transform duration-200 ${
+                              active
+                                ? "translate-x-0.5 text-[#5ca4ff]"
+                                : "text-[#9eb2d0] group-hover:translate-x-0.5"
+                            }`}
+                          />
+                        </div>
+
                         <p className="mt-2 text-evo-body text-[#d6e2f5]">
                           {beat.painDesc}
                         </p>
-                        <p className="mt-3 text-evo-small font-semibold text-[#5ca4ff]">
-                          Hiệu quả chuyển đổi: {beat.metricBefore} → {beat.metricAfter}
-                        </p>
-                      </div>
+
+                        {/* Anti-Spreadsheet Relational Flow Outcome */}
+                        <div className="mt-3 flex flex-wrap items-center gap-2 text-evo-small font-semibold tabular-nums">
+                          <span className="text-[#fcd34d]">{beat.metricBefore}</span>
+                          <ArrowRight className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden="true" />
+                          <span className="text-[#6ee7b7]">{beat.metricAfter}</span>
+                        </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -833,14 +914,14 @@ function EvoviLandingPage() {
         >
           <div className="container-evo">
             {/* Scroll-scrubbed Luminous Ink-Fill Manifesto on 42% axis */}
-            <div data-manifesto-block className="grid gap-8 lg:grid-cols-12">
+            <div data-manifesto-block className="grid gap-6 lg:grid-cols-12 lg:gap-8">
               <div className="lg:col-span-5" data-section-sub>
                 <p className="max-w-[36ch] text-evo-body text-[#d6e2f5]">
                   Phương pháp luận kỹ thuật Spec-Driven thống nhất đứng sau toàn bộ sản phẩm của Evovi.
                 </p>
               </div>
               <div className="lg:col-span-7">
-                <blockquote className="font-display text-[clamp(1.25rem,1.95vw,1.8rem)] font-semibold leading-[1.42] tracking-[-0.016em] text-[#f5f8ff]">
+                <blockquote className="font-display text-[clamp(1.25rem,1.95vw,1.8rem)] font-semibold leading-[1.42] tracking-[-0.018em] text-[#f5f8ff]">
                   {MANIFESTO_PHRASES.map((phrase, idx) => (
                     <span key={idx} data-ink-phrase className="mr-2 inline">
                       {phrase}
@@ -850,36 +931,43 @@ function EvoviLandingPage() {
               </div>
             </div>
 
-            {/* Executive 4-Cell Dark Architectural Mosaic */}
+            {/* Executive 4-Cell Dark Architectural Mosaic (Pillar 5, 6 & 11) */}
             <div
               data-mosaic-grid
-              className="mt-16 grid gap-3 overflow-hidden bg-[#081224] p-3 lg:grid-cols-12"
+              data-ui="architectural-mosaic"
+              className="mt-14 grid gap-3 overflow-hidden rounded-xl bg-[#081224] p-3 md:mt-16 lg:grid-cols-12"
             >
-              {/* Cell 1: Studio Architecture Photograph (7 cols) */}
+              {/* Cell 1: Studio Architecture Photograph with Progressive Blur Caption (7 cols) */}
               <div
                 data-mosaic-cell
-                className="overflow-hidden bg-[#050b16] lg:col-span-7"
+                className="min-h-[280px] overflow-hidden rounded-lg lg:col-span-7"
               >
-                <img
-                  data-mosaic-img
+                <EditorialPhotoFrame
                   src={studioBlueprintImg}
                   alt="Bàn thiết kế kiến trúc mô-đun phần mềm tại studio kỹ thuật Evovi"
                   width={1440}
                   height={810}
-                  loading="lazy"
-                  className="h-full min-h-[280px] w-full object-cover will-change-transform"
+                  tag="Studio Kỹ thuật Spec-Driven"
+                  caption="Chuẩn hóa sơ đồ luồng nghiệp vụ và phân quyền trước khi viết mã"
+                  aspectClassName="aspect-[16/10]"
+                  imgDataAttr="mosaic"
                 />
               </div>
 
-              {/* Cell 2: Executive Cobalt Block (5 cols) */}
+              {/* Cell 2: Brand-Tinted Dark Surface instead of glaring solid blue block (5 cols) */}
               <div
                 data-mosaic-cell
-                className="flex flex-col justify-between bg-[#0b63e5] p-8 text-white md:p-10 lg:col-span-5"
+                className="evo-mosaic-brand flex flex-col justify-between rounded-lg p-8 text-[#f5f8ff] md:p-10 lg:col-span-5"
               >
-                <div className="font-display text-evo-hero font-bold tabular-nums">
-                  100%
+                <div>
+                  <span className="evo-chip-info text-evo-small font-semibold">
+                    Cam kết chuẩn đầu vào
+                  </span>
+                  <div className="mt-4 font-display text-evo-hero font-bold text-[#93c5fd] tabular-nums">
+                    100%
+                  </div>
                 </div>
-                <p className="mt-8 max-w-[36ch] text-evo-body text-white">
+                <p className="mt-8 max-w-[36ch] text-evo-body text-[#d6e2f5]">
                   Dự án khởi đầu bằng tài liệu đặc tả nghiệp vụ sống và ma trận phân quyền rõ ràng để đội vận hành và kỹ sư nói chung một ngôn ngữ.
                 </p>
               </div>
@@ -887,7 +975,7 @@ function EvoviLandingPage() {
               {/* Cell 3: Elevated Slate-Navy Block (5 cols) */}
               <div
                 data-mosaic-cell
-                className="flex flex-col justify-between bg-[#0d1b33] p-8 text-[#f5f8ff] md:p-10 lg:col-span-5"
+                className="evo-surface-card flex flex-col justify-between rounded-lg p-8 text-[#f5f8ff] md:p-10 lg:col-span-5"
               >
                 <div className="font-display text-evo-h2 font-bold text-[#5ca4ff]">
                   Web · App · AI
@@ -900,7 +988,7 @@ function EvoviLandingPage() {
               {/* Cell 4: Deep Steel-Navy Block (7 cols) */}
               <div
                 data-mosaic-cell
-                className="flex flex-col justify-between bg-[#132747] p-8 text-[#f5f8ff] md:p-10 lg:col-span-7"
+                className="evo-surface-card flex flex-col justify-between rounded-lg bg-[#10213d] p-8 text-[#f5f8ff] md:p-10 lg:col-span-7"
               >
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
@@ -923,7 +1011,7 @@ function EvoviLandingPage() {
               </div>
             </div>
 
-            {/* 6 Core Capabilities on 42% Axis: Open Enterprise Index */}
+            {/* 6 Core Capabilities on 42% Axis: Semantic Buttons + Deliverable Chips */}
             <div className="mt-20 grid gap-12 lg:grid-cols-12 lg:items-start">
               <div className="lg:sticky lg:top-24 lg:col-span-5">
                 <h2
@@ -933,51 +1021,81 @@ function EvoviLandingPage() {
                   Đồng hành trọn vòng đời hệ thống
                 </h2>
                 <p className="mt-4 max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Chạm vào từng năng lực để xem gói bàn giao kỹ thuật cụ thể mà đội ngũ Evovi thiết lập cho doanh nghiệp.
+                  Chọn từng năng lực để xem gói sản phẩm bàn giao kỹ thuật cụ thể mà đội ngũ Evovi thiết lập cho doanh nghiệp.
                 </p>
 
-                <div className="mt-8 overflow-hidden rounded-lg bg-[#081224]">
-                  <img
-                    data-cap-img
+                <div className="mt-8 overflow-hidden rounded-xl bg-[#081224]">
+                  <EditorialPhotoFrame
                     src={factoryOpsImg}
                     alt="Kỹ sư điều hành giám sát hệ thống vận hành số hóa trên máy tính bảng tại doanh nghiệp"
                     width={1080}
                     height={1440}
-                    loading="lazy"
-                    className="aspect-[4/3] w-full object-cover will-change-transform"
+                    tag="Triển khai đa thiết bị"
+                    caption="Vận hành ổn định từ phòng điều hành trung tâm tới hiện trường"
+                    aspectClassName="aspect-[4/3]"
+                    imgDataAttr="cap"
                   />
                 </div>
               </div>
 
-              <div className="space-y-3.5 lg:col-span-7">
+              <div
+                className="space-y-3 lg:col-span-7"
+                role="tablist"
+                aria-label="Sáu năng lực kỹ thuật cốt lõi"
+              >
                 {CAPABILITIES.map((cap, idx) => {
                   const isSelected = idx === activeCapabilityIdx;
+                  const artifacts = cap.deliverable.split(" · ");
                   return (
-                    <div
+                    <button
                       key={cap.title}
+                      type="button"
+                      role="tab"
+                      aria-selected={isSelected}
                       data-cap-item
+                      data-ui="capability-card"
                       onMouseEnter={() => setActiveCapabilityIdx(idx)}
                       onClick={() => setActiveCapabilityIdx(idx)}
-                      className={`cursor-pointer border-l-4 transition-colors duration-200 ${
+                      className={`group block w-full cursor-pointer rounded-r-xl border-l-4 text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5ca4ff] ${
                         isSelected
-                          ? "border-[#247eff] bg-[#0d1b33] p-6 text-[#f5f8ff] md:p-7"
-                          : "border-[#132747] bg-transparent py-4 pr-4 pl-6 text-[#f5f8ff] hover:border-[#5ca4ff]"
+                          ? "evo-surface-card border-l-[#247eff] p-6 text-[#f5f8ff] md:p-7"
+                          : "border-l-[#132747] bg-transparent py-4 pr-4 pl-6 text-[#f5f8ff] hover:border-l-[#5ca4ff] hover:bg-[#0d1b33]/40"
                       }`}
                     >
-                      <h3 className="font-display text-evo-h3 font-semibold">
-                        {cap.title}
-                      </h3>
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="font-display text-evo-h3 font-semibold">
+                          {cap.title}
+                        </h3>
+                        <ChevronRight
+                          aria-hidden="true"
+                          className={`mt-1 h-5 w-5 shrink-0 transition-transform duration-200 ${
+                            isSelected
+                              ? "translate-x-0.5 text-[#5ca4ff]"
+                              : "text-[#9eb2d0] group-hover:translate-x-0.5"
+                          }`}
+                        />
+                      </div>
+
                       <p className="mt-2 max-w-[60ch] text-evo-body text-[#d6e2f5]">
                         {cap.summary}
                       </p>
-                      <p
-                        className={`mt-3 text-evo-small font-semibold ${
-                          isSelected ? "text-[#34c759]" : "text-[#5ca4ff]"
-                        }`}
-                      >
-                        Bàn giao: {cap.deliverable}
-                      </p>
-                    </div>
+
+                      {/* Pillar 2: Discrete Tonal Deliverable Chips instead of raw "Bàn giao: X · Y · Z" string */}
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {artifacts.map((artifact) => (
+                          <span
+                            key={artifact}
+                            className={`rounded-full px-3 py-1 text-evo-small font-semibold ${
+                              isSelected
+                                ? "evo-chip-success"
+                                : "bg-[#0d1b33] text-[#9eb2d0]"
+                            }`}
+                          >
+                            {artifact}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
                   );
                 })}
               </div>
@@ -988,31 +1106,31 @@ function EvoviLandingPage() {
         {/* =========================================================
             VELOCITY-DRIVEN COUNTER-SCROLLING DARK ENTERPRISE RIBBONS
            ========================================================= */}
-        <div aria-hidden="true" className="bg-[#081224] py-5 select-none">
+        <div aria-hidden="true" className="bg-[#081224] py-6 select-none">
           <div className="container-evo space-y-2.5">
-            <div className="overflow-hidden rounded-md bg-[#0d1b33] py-3.5 text-[#f5f8ff]">
+            <div className="evo-ribbon-fade overflow-hidden rounded-lg bg-[#0d1b33] py-3.5 text-[#f5f8ff]">
               <div ref={ribbonARef} className="evo-ribbon-track">
                 {[...RIBBON_ITEMS_A, ...RIBBON_ITEMS_A, ...RIBBON_ITEMS_A, ...RIBBON_ITEMS_A].map(
-                  (item, i) => (
+                  (entry, i) => (
                     <span
                       key={i}
                       className="mx-6 font-display text-evo-h3 font-semibold"
                     >
-                      {item} <span className="ml-6 font-bold text-[#5ca4ff]">/</span>
+                      {entry} <span className="ml-6 font-bold text-[#5ca4ff]">/</span>
                     </span>
                   ),
                 )}
               </div>
             </div>
-            <div className="overflow-hidden rounded-md bg-[#050b16] py-3.5 text-[#d6e2f5]">
+            <div className="evo-ribbon-fade overflow-hidden rounded-lg bg-[#050b16] py-3.5 text-[#d6e2f5]">
               <div ref={ribbonBRef} className="evo-ribbon-track">
                 {[...RIBBON_ITEMS_B, ...RIBBON_ITEMS_B, ...RIBBON_ITEMS_B, ...RIBBON_ITEMS_B].map(
-                  (item, i) => (
+                  (entry, i) => (
                     <span
                       key={i}
                       className="mx-6 font-display text-evo-h3 font-semibold"
                     >
-                      {item} <span className="ml-6 font-bold text-[#34c759]">/</span>
+                      {entry} <span className="ml-6 font-bold text-[#6ee7b7]">/</span>
                     </span>
                   ),
                 )}
@@ -1037,13 +1155,14 @@ function EvoviLandingPage() {
           className="bg-[#081224] py-20 text-[#f5f8ff] md:py-28"
         >
           <div className="container-evo">
-            <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-              <div className="lg:col-span-5" data-section-sub>
+            {/* Pillar 2 & 3: H2 leads first on Mobile, 16px mobile proximity */}
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-8">
+              <div className="order-2 lg:order-1 lg:col-span-5" data-section-sub>
                 <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
                   Mỗi chặng đều có đầu ra kiểm chứng được: rõ phạm vi, rõ thời gian và không phát sinh chi phí mập mờ.
                 </p>
               </div>
-              <div className="lg:col-span-7">
+              <div className="order-1 lg:order-2 lg:col-span-7">
                 <h2
                   data-section-heading
                   className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
@@ -1053,10 +1172,9 @@ function EvoviLandingPage() {
               </div>
             </div>
 
-            <div className="mt-14 grid lg:grid-cols-12">
+            <div className="mt-12 grid md:mt-14 lg:grid-cols-12">
               <div className="hidden lg:col-span-5 lg:block" />
               <div data-process-track className="relative pl-8 lg:col-span-7">
-                {/* Continuous scrubbed signal spine */}
                 <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-[#132747]">
                   <div
                     data-process-conduit
@@ -1064,7 +1182,6 @@ function EvoviLandingPage() {
                   />
                 </div>
 
-                {/* Open Enterprise Ordered List */}
                 <ol className="list-decimal space-y-8 pl-6 marker:font-display marker:text-evo-h3 marker:font-bold marker:text-[#5ca4ff]">
                   {DELIVERY_STEPS.map((step) => (
                     <li
@@ -1087,7 +1204,7 @@ function EvoviLandingPage() {
         </section>
 
         {/* =========================================================
-            ACT VI: CONSULTATION SCOPER & EXECUTIVE LEAD FORM (#050b16)
+            ACT VI: CONSULTATION SCOPER & 4-STATE VALIDATED LEAD FORM
            ========================================================= */}
         <section
           id="contact"
@@ -1098,7 +1215,7 @@ function EvoviLandingPage() {
 
           <div className="container-evo relative z-10">
             <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
-              {/* Left 42%: Statement + Quick Scope Selector + Direct Contact */}
+              {/* Left 42%: Statement + Quick Scope Selector + Copyable Contact Coordinates */}
               <div className="lg:col-span-5">
                 <h2
                   data-section-heading
@@ -1110,10 +1227,10 @@ function EvoviLandingPage() {
                   Bạn không cần chuẩn bị tài liệu kỹ thuật phức tạp. Trong buổi làm việc đầu tiên, đội ngũ kỹ sư giải pháp Evovi sẽ cùng bạn phác thảo kiến trúc và lộ trình ra bản chạy thử rõ ràng.
                 </p>
 
-                {/* Interactive Quick-Scope Chips */}
+                {/* Interactive Quick-Scope Chips (Appends safely + Outcome Toast) */}
                 <div className="mt-8">
                   <p className="text-evo-small font-semibold text-[#9eb2d0]">
-                    Chọn nhanh phạm vi bạn đang quan tâm:
+                    Chọn nhanh phạm vi để điền sẵn vào biểu mẫu:
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {SCOPE_PRESETS.map((preset) => {
@@ -1123,79 +1240,81 @@ function EvoviLandingPage() {
                           key={preset}
                           type="button"
                           onClick={() => handleSelectProjectScope(preset)}
-                          className={`rounded-md px-3.5 py-2 text-left text-evo-small font-semibold transition-colors ${
+                          className={`inline-flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-2 text-left text-evo-small font-semibold transition-colors active:scale-[0.98] ${
                             active
                               ? "bg-[#0b63e5] text-white"
-                              : "bg-[#0d1b33] text-[#d6e2f5] hover:bg-[#132747] hover:text-[#f5f8ff]"
+                              : "evo-surface-card text-[#d6e2f5] hover:bg-[#132747] hover:text-[#f5f8ff]"
                           }`}
                         >
-                          {preset}
+                          {active && <Check className="h-4 w-4 shrink-0" aria-hidden="true" />}
+                          <span>{preset}</span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* Direct studio contact coordinates */}
-                <div className="mt-10 space-y-3.5 rounded-lg bg-[#0d1b33] p-6 text-evo-body">
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-4 w-4 shrink-0 text-[#5ca4ff]" />
-                    <a
-                      href="mailto:kinhdoanh@evovi.vn"
-                      className="font-medium text-[#f5f8ff] hover:text-[#5ca4ff]"
-                    >
-                      kinhdoanh@evovi.vn
-                    </a>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-4 w-4 shrink-0 text-[#34c759]" />
-                    <span>
-                      Hotline 24/7:{" "}
-                      <a
-                        href="tel:0868661235"
-                        className="font-semibold tabular-nums text-[#f5f8ff] hover:text-[#34c759]"
-                      >
-                        0868 661 235
-                      </a>
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 text-[#d6e2f5]">
-                    <MapPin className="h-4 w-4 shrink-0 text-[#f5a623]" />
+                {/* Direct studio contact coordinates with 20px icons & Copy Confirmation Chips (Pillar 8 & 10) */}
+                <div
+                  data-ui="contact-card"
+                  className="evo-surface-card mt-8 space-y-4 rounded-xl p-6 text-evo-body"
+                >
+                  <CopyContactChip
+                    icon={<Mail className="h-5 w-5 shrink-0 text-[#5ca4ff]" aria-hidden="true" />}
+                    href="mailto:kinhdoanh@evovi.vn"
+                    displayValue="kinhdoanh@evovi.vn"
+                    copyValue="kinhdoanh@evovi.vn"
+                  />
+                  <CopyContactChip
+                    icon={<Phone className="h-5 w-5 shrink-0 text-[#6ee7b7]" aria-hidden="true" />}
+                    href="tel:0868661235"
+                    displayValue="0868 661 235"
+                    copyValue="0868661235"
+                    note="24/7"
+                  />
+                  <div className="flex items-center gap-2.5 text-[#d6e2f5]">
+                    <MapPin className="h-5 w-5 shrink-0 text-[#fcd34d]" aria-hidden="true" />
                     <span>Hà Nội · TP. Hồ Chí Minh</span>
                   </div>
                 </div>
               </div>
 
-              {/* Right 58%: Consultation Form */}
+              {/* Right 58%: 4-State Validated Consultation Form + 5-State Submit */}
               <div className="lg:col-span-7">
                 <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setSubmitted(true);
-                  }}
-                  className="rounded-lg bg-[#0d1b33] p-6 md:p-8"
+                  noValidate
+                  onSubmit={handleFormSubmit}
+                  data-ui="consultation-form"
+                  className="evo-surface-card rounded-xl p-6 md:p-8"
                 >
                   {submitted ? (
-                    <div className="py-12 text-center">
-                      <CheckCircle2 className="mx-auto h-14 w-14 text-[#34c759]" />
+                    <div className="evo-panel-enter py-12 text-center" role="status" aria-live="polite">
+                      <CheckCircle2 className="mx-auto h-14 w-14 text-[#6ee7b7]" />
                       <h3 className="mt-4 font-display text-evo-h3 font-semibold text-[#f5f8ff]">
                         Đã tiếp nhận yêu cầu tư vấn
                       </h3>
                       <p className="mx-auto mt-2 max-w-[42ch] text-evo-body text-[#d6e2f5]">
-                        Cảm ơn bạn. Đội ngũ kỹ sư giải pháp của Evovi sẽ liên hệ sớm nhất trong giờ làm việc để hẹn lịch trao đổi chi tiết.
+                        Cảm ơn {fields.name.trim() || "bạn"}. Đội ngũ kỹ sư giải pháp của Evovi sẽ phản hồi qua{" "}
+                        <strong className="font-semibold text-[#f5f8ff]">{fields.email.trim()}</strong>{" "}
+                        sớm nhất trong giờ làm việc để hẹn lịch trao đổi 1-1.
                       </p>
                       <button
                         type="button"
-                        onClick={() => setSubmitted(false)}
-                        className="mt-6 rounded-md bg-[#132747] px-4 py-2.5 text-evo-small font-semibold text-[#f5f8ff] transition-colors hover:bg-[#0b63e5]"
+                        onClick={() => {
+                          setSubmitted(false);
+                          setNeedText("");
+                          setSelectedPreset("");
+                        }}
+                        className="evo-btn-ghost mt-6"
                       >
                         Gửi thêm yêu cầu khác
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
+                        {/* Name Field */}
+                        <div className="evo-field" data-state={errors.name ? "error" : "default"}>
                           <label
                             htmlFor="evo-name"
                             className="mb-1.5 block text-evo-small font-semibold text-[#f5f8ff]"
@@ -1204,15 +1323,30 @@ function EvoviLandingPage() {
                           </label>
                           <input
                             id="evo-name"
-                            required
                             type="text"
                             name="name"
-                            placeholder="Nguyễn Văn A"
+                            value={fields.name}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setFields((f) => ({ ...f, name: v }));
+                              if (errors.name) setErrors((er) => ({ ...er, name: undefined }));
+                            }}
+                            placeholder="Nguyễn Minh Hoàng"
                             maxLength={255}
-                            className="w-full rounded-md bg-[#050b16] px-4 py-3 text-evo-body text-[#f5f8ff] placeholder:text-[#9eb2d0]/65 focus:ring-2 focus:ring-[#247eff] focus:outline-none"
+                            aria-invalid={Boolean(errors.name)}
+                            aria-describedby={errors.name ? "err-evo-name" : undefined}
+                            className="evo-field-control"
                           />
+                          {errors.name && (
+                            <p id="err-evo-name" className="mt-1.5 flex items-center gap-1.5 text-evo-small text-[#fca5a5]">
+                              <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                              <span>{errors.name}</span>
+                            </p>
+                          )}
                         </div>
-                        <div>
+
+                        {/* Company Field */}
+                        <div className="evo-field" data-state={errors.company ? "error" : "default"}>
                           <label
                             htmlFor="evo-company"
                             className="mb-1.5 block text-evo-small font-semibold text-[#f5f8ff]"
@@ -1221,18 +1355,41 @@ function EvoviLandingPage() {
                           </label>
                           <input
                             id="evo-company"
-                            required
                             type="text"
                             name="company"
-                            placeholder="Công ty Cổ phần ABC"
+                            value={fields.company}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setFields((f) => ({ ...f, company: v }));
+                              if (errors.company) setErrors((er) => ({ ...er, company: undefined }));
+                            }}
+                            placeholder="Công ty Cổ phần Vận tải & Truyền thông Việt"
                             maxLength={255}
-                            className="w-full rounded-md bg-[#050b16] px-4 py-3 text-evo-body text-[#f5f8ff] placeholder:text-[#9eb2d0]/65 focus:ring-2 focus:ring-[#247eff] focus:outline-none"
+                            aria-invalid={Boolean(errors.company)}
+                            aria-describedby={errors.company ? "err-evo-company" : undefined}
+                            className="evo-field-control"
                           />
+                          {errors.company && (
+                            <p id="err-evo-company" className="mt-1.5 flex items-center gap-1.5 text-evo-small text-[#fca5a5]">
+                              <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                              <span>{errors.company}</span>
+                            </p>
+                          )}
                         </div>
                       </div>
 
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
+                        {/* Email Field (Default | Focus | Error | Actionable Warning) */}
+                        <div
+                          className="evo-field"
+                          data-state={
+                            errors.email
+                              ? "error"
+                              : showPersonalEmailWarning
+                                ? "warning"
+                                : "default"
+                          }
+                        >
                           <label
                             htmlFor="evo-email"
                             className="mb-1.5 block text-evo-small font-semibold text-[#f5f8ff]"
@@ -1241,15 +1398,52 @@ function EvoviLandingPage() {
                           </label>
                           <input
                             id="evo-email"
-                            required
                             type="email"
                             name="email"
-                            placeholder="ban@doanhnghiep.vn"
+                            value={fields.email}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setFields((f) => ({ ...f, email: v }));
+                              setDismissedEmailWarn(false);
+                              if (errors.email) setErrors((er) => ({ ...er, email: undefined }));
+                            }}
+                            placeholder="hoang.nm@doanhnghiep.vn"
                             maxLength={255}
-                            className="w-full rounded-md bg-[#050b16] px-4 py-3 text-evo-body text-[#f5f8ff] placeholder:text-[#9eb2d0]/65 focus:ring-2 focus:ring-[#247eff] focus:outline-none"
+                            aria-invalid={Boolean(errors.email)}
+                            aria-describedby={
+                              errors.email
+                                ? "msg-evo-email"
+                                : showPersonalEmailWarning
+                                  ? "msg-evo-email"
+                                  : undefined
+                            }
+                            className="evo-field-control"
                           />
+                          {errors.email && (
+                            <p id="msg-evo-email" className="mt-1.5 flex items-center gap-1.5 text-evo-small text-[#fca5a5]">
+                              <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                              <span>{errors.email}</span>
+                            </p>
+                          )}
+                          {showPersonalEmailWarning && (
+                            <p id="msg-evo-email" className="mt-1.5 flex items-start gap-1.5 text-evo-small text-[#fcd34d]">
+                              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                              <span>
+                                Gợi ý dùng email tên miền công ty để ưu tiên phân luồng.{" "}
+                                <button
+                                  type="button"
+                                  onClick={() => setDismissedEmailWarn(true)}
+                                  className="cursor-pointer font-semibold underline"
+                                >
+                                  Vẫn giữ email này
+                                </button>
+                              </span>
+                            </p>
+                          )}
                         </div>
-                        <div>
+
+                        {/* Phone Field */}
+                        <div className="evo-field" data-state={errors.phone ? "error" : "default"}>
                           <label
                             htmlFor="evo-phone"
                             className="mb-1.5 block text-evo-small font-semibold text-[#f5f8ff]"
@@ -1258,66 +1452,145 @@ function EvoviLandingPage() {
                           </label>
                           <input
                             id="evo-phone"
-                            required
                             type="tel"
                             name="phone"
-                            placeholder="0909 000 000"
+                            value={fields.phone}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setFields((f) => ({ ...f, phone: v }));
+                              if (errors.phone) setErrors((er) => ({ ...er, phone: undefined }));
+                            }}
+                            placeholder="0909 246 810"
                             maxLength={30}
-                            className="w-full rounded-md bg-[#050b16] px-4 py-3 text-evo-body text-[#f5f8ff] placeholder:text-[#9eb2d0]/65 focus:ring-2 focus:ring-[#247eff] focus:outline-none"
+                            aria-invalid={Boolean(errors.phone)}
+                            aria-describedby={errors.phone ? "err-evo-phone" : undefined}
+                            className="evo-field-control tabular-nums"
                           />
+                          {errors.phone && (
+                            <p id="err-evo-phone" className="mt-1.5 flex items-center gap-1.5 text-evo-small text-[#fca5a5]">
+                              <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                              <span>{errors.phone}</span>
+                            </p>
+                          )}
                         </div>
                       </div>
 
-                      <div>
+                      {/* Role Select with Custom Chevron Signifier */}
+                      <div className="evo-field" data-state={errors.role ? "error" : "default"}>
                         <label
                           htmlFor="evo-role"
                           className="mb-1.5 block text-evo-small font-semibold text-[#f5f8ff]"
                         >
                           Vai trò của bạn
                         </label>
-                        <select
-                          id="evo-role"
-                          required
-                          name="role"
-                          defaultValue=""
-                          className="w-full rounded-md bg-[#050b16] px-4 py-3 text-evo-body text-[#f5f8ff] focus:ring-2 focus:ring-[#247eff] focus:outline-none"
-                        >
-                          <option value="" disabled>
-                            Chọn vai trò công việc
-                          </option>
-                          <option value="ceo">CEO / Chủ doanh nghiệp / Founder</option>
-                          <option value="cto">CTO / Giám đốc Công nghệ</option>
-                          <option value="ops">Giám đốc Vận hành / Trưởng bộ phận</option>
-                          <option value="product">Quản lý Sản phẩm / Dự án</option>
-                          <option value="other">Vai trò khác</option>
-                        </select>
+                        <div className="relative">
+                          <select
+                            id="evo-role"
+                            name="role"
+                            value={fields.role}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setFields((f) => ({ ...f, role: v }));
+                              if (errors.role) setErrors((er) => ({ ...er, role: undefined }));
+                            }}
+                            aria-invalid={Boolean(errors.role)}
+                            aria-describedby={errors.role ? "err-evo-role" : undefined}
+                            className={`evo-field-control appearance-none pr-11 ${
+                              fields.role ? "text-[#f5f8ff]" : "text-[#9eb2d0]"
+                            }`}
+                          >
+                            <option value="" disabled className="bg-[#081224] text-[#9eb2d0]">
+                              Chọn vai trò công việc
+                            </option>
+                            <option value="ceo" className="bg-[#081224] text-[#f5f8ff]">
+                              CEO / Chủ doanh nghiệp / Founder
+                            </option>
+                            <option value="cto" className="bg-[#081224] text-[#f5f8ff]">
+                              CTO / Giám đốc Công nghệ
+                            </option>
+                            <option value="ops" className="bg-[#081224] text-[#f5f8ff]">
+                              Giám đốc Vận hành / Trưởng bộ phận
+                            </option>
+                            <option value="product" className="bg-[#081224] text-[#f5f8ff]">
+                              Quản lý Sản phẩm / Dự án
+                            </option>
+                            <option value="other" className="bg-[#081224] text-[#f5f8ff]">
+                              Vai trò khác
+                            </option>
+                          </select>
+                          <ChevronDown
+                            aria-hidden="true"
+                            className="pointer-events-none absolute top-1/2 right-3.5 h-5 w-5 -translate-y-1/2 text-[#9eb2d0]"
+                          />
+                        </div>
+                        {errors.role && (
+                          <p id="err-evo-role" className="mt-1.5 flex items-center gap-1.5 text-evo-small text-[#fca5a5]">
+                            <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                            <span>{errors.role}</span>
+                          </p>
+                        )}
                       </div>
 
-                      <div>
-                        <label
-                          htmlFor="evo-need"
-                          className="mb-1.5 block text-evo-small font-semibold text-[#f5f8ff]"
-                        >
-                          Mô tả ngắn nhu cầu hoặc điểm nghẽn hiện tại
-                        </label>
+                      {/* Need Textarea + Scope Insertion Outcome Chip */}
+                      <div className="evo-field" data-state={errors.need ? "error" : "default"}>
+                        <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+                          <label
+                            htmlFor="evo-need"
+                            className="text-evo-small font-semibold text-[#f5f8ff]"
+                          >
+                            Mô tả ngắn nhu cầu hoặc điểm nghẽn hiện tại
+                          </label>
+                          {scopeToast && (
+                            <span
+                              role="status"
+                              aria-live="polite"
+                              className="evo-panel-enter evo-chip-success text-evo-small font-semibold"
+                            >
+                              <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                              <span>{scopeToast}</span>
+                            </span>
+                          )}
+                        </div>
                         <textarea
                           id="evo-need"
-                          required
                           rows={4}
                           name="need"
                           value={needText}
-                          onChange={(e) => setNeedText(e.target.value)}
+                          onChange={(e) => {
+                            setNeedText(e.target.value);
+                            if (errors.need) setErrors((er) => ({ ...er, need: undefined }));
+                          }}
                           maxLength={1200}
+                          aria-invalid={Boolean(errors.need)}
+                          aria-describedby={errors.need ? "err-evo-need" : undefined}
                           placeholder="Ví dụ: cần quản lý tồn kho quảng cáo OOH, xây dựng LMS đào tạo nội bộ đa chi nhánh, hoặc làm app kỹ thuật viên hiện trường..."
-                          className="w-full resize-none rounded-md bg-[#050b16] px-4 py-3 text-evo-body text-[#f5f8ff] placeholder:text-[#9eb2d0]/65 focus:ring-2 focus:ring-[#247eff] focus:outline-none"
+                          className="evo-field-control resize-none"
                         />
+                        {errors.need && (
+                          <p id="err-evo-need" className="mt-1.5 flex items-center gap-1.5 text-evo-small text-[#fca5a5]">
+                            <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                            <span>{errors.need}</span>
+                          </p>
+                        )}
                       </div>
 
+                      {/* 5-State Primary Submit Button (Default, Hover, Pressed, Disabled, Loading) */}
                       <button
                         type="submit"
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#0b63e5] px-6 py-4 text-evo-body font-semibold text-white transition-colors hover:bg-[#247eff]"
+                        disabled={isSubmitting}
+                        data-loading={isSubmitting ? "true" : "false"}
+                        className="evo-btn-primary evo-btn-lg w-full text-evo-body disabled:opacity-45"
                       >
-                        Gửi thông tin để nhận lịch tư vấn 1-1 →
+                        <span>
+                          {isSubmitting
+                            ? "Đang tiếp nhận yêu cầu..."
+                            : "Gửi thông tin để nhận lịch tư vấn 1-1"}
+                        </span>
+                        {isSubmitting ? (
+                          <span className="evo-btn-spinner" aria-hidden="true" />
+                        ) : (
+                          <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
+                        )}
                       </button>
                     </div>
                   )}
@@ -1334,29 +1607,25 @@ function EvoviLandingPage() {
       <footer className="overflow-hidden bg-[#030710] pt-16 pb-14 text-[#f5f8ff]">
         <div className="container-evo">
           <div className="grid gap-10 lg:grid-cols-12">
-            {/* Left 42%: Brand badge + direct high-scale links */}
+            {/* Left 42%: Brand badge + copyable contact coordinates */}
             <div className="lg:col-span-5">
               <EvoviLogoIcon size="md" />
               <p className="mt-4 max-w-[38ch] text-evo-body text-[#d6e2f5]">
                 Studio kỹ thuật phần mềm thiết kế riêng, nền tảng quản trị đa tổ chức và giải pháp AI vận hành thực chiến cho doanh nghiệp.
               </p>
-              <div className="mt-6 space-y-1.5 font-display text-evo-h3 font-semibold">
-                <div>
-                  <a
-                    href="mailto:kinhdoanh@evovi.vn"
-                    className="text-[#5ca4ff] transition-colors hover:text-[#f5f8ff]"
-                  >
-                    kinhdoanh@evovi.vn
-                  </a>
-                </div>
-                <div>
-                  <a
-                    href="tel:0868661235"
-                    className="tabular-nums text-[#f5f8ff] transition-colors hover:text-[#5ca4ff]"
-                  >
-                    0868 661 235
-                  </a>
-                </div>
+              <div className="mt-6 space-y-3 text-evo-body">
+                <CopyContactChip
+                  icon={<Mail className="h-5 w-5 shrink-0 text-[#5ca4ff]" aria-hidden="true" />}
+                  href="mailto:kinhdoanh@evovi.vn"
+                  displayValue="kinhdoanh@evovi.vn"
+                  copyValue="kinhdoanh@evovi.vn"
+                />
+                <CopyContactChip
+                  icon={<Phone className="h-5 w-5 shrink-0 text-[#6ee7b7]" aria-hidden="true" />}
+                  href="tel:0868661235"
+                  displayValue="0868 661 235"
+                  copyValue="0868661235"
+                />
               </div>
             </div>
 
@@ -1437,13 +1706,19 @@ function EvoviLandingPage() {
                 <ul className="mt-4 space-y-2.5 text-evo-small text-[#9eb2d0]">
                   <li className="text-[#f5f8ff]">Hà Nội · Việt Nam</li>
                   <li className="text-[#f5f8ff]">TP. Hồ Chí Minh · Việt Nam</li>
-                  <li>Hỗ trợ kỹ thuật: support@evovi.vn</li>
+                  <li>
+                    <a
+                      href="mailto:support@evovi.vn"
+                      className="hover:text-[#f5f8ff]"
+                    >
+                      support@evovi.vn
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
 
-          {/* Closing Monumental Wordmark at Bottom */}
           <div
             aria-hidden="true"
             className="mt-12 select-none font-display text-[clamp(4.5rem,17vw,14.5rem)] font-bold leading-[0.86] tracking-[-0.04em] text-[#607ba3]"

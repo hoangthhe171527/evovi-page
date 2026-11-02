@@ -492,7 +492,7 @@ export const CAPABILITIES = [
   },
   {
     code: "CAP-F",
-    title: "Hạ tầng Đám mây Tự động & Bảo mật Vận hành",
+    title: "Hạ tầng Cloud IaC & Bảo mật 24/7",
     summary:
       "Thiết lập hạ tầng AWS/Cloud bằng mã nguồn (IaC), đường ống CI/CD không gián đoạn, sao lưu định kỳ, giám sát lỗi chủ động và đồng hành kỹ thuật 24/7.",
     deliverable: "Terraform / Docker · Giám sát SLA · Phân quyền & Sao lưu tự động",

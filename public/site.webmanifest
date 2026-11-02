@@ -1,0 +1,28 @@
+{
+  "name": "Evovi · Phần mềm & AI thiết kế riêng cho doanh nghiệp",
+  "short_name": "Evovi",
+  "description": "Studio kỹ thuật phần mềm Spec-Driven & AI-Native: xây dựng hệ thống ERP, LMS, OOH, ứng dụng di động và tác nhân AI vận hành cho doanh nghiệp.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070d18",
+  "theme_color": "#070d18",
+  "lang": "vi",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

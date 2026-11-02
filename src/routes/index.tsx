@@ -1,551 +1,1347 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import heroImg from "@/assets/hero-dashboard.jpg";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { EvoviLogoIcon } from "@/components/EvoviLogoIcon";
 import {
-  ArrowRight, Sparkles, Code2, Layers, Plug, Wrench, Lightbulb,
-  AlertTriangle, Workflow, Settings2, CheckCircle2, Zap, Shield,
-  TrendingUp, Clock, MessageCircle, Mail, Phone, MapPin, Quote,
-  ChevronRight, Target, Cog, Rocket, LifeBuoy, Search, PenTool,
+  HeroTriSpectrumCanvas,
+  HorizonSignalCanvas,
+} from "@/components/landing/EvoviSignalCanvas";
+import { SystemTransformerStage } from "@/components/landing/SystemTransformerStage";
+import { FlagshipShowcaseStage } from "@/components/landing/FlagshipShowcaseStage";
+import {
+  CAPABILITIES,
+  DELIVERY_STEPS,
+  EVOVI_PROJECTS,
+  TRANSFORMATION_BEATS,
+} from "@/data/evovi-projects";
+import { buildSeoHead, SITE_URL } from "@/lib/seo";
+import studioBlueprintImg from "@/assets/evovi-studio-blueprint.jpg";
+import factoryOpsImg from "@/assets/evovi-factory-ops.jpg";
+import {
+  CheckCircle2,
+  Mail,
+  MapPin,
+  Menu,
+  Phone,
+  X,
 } from "lucide-react";
 
+const HOME_JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
+    name: "Evovi",
+    url: `${SITE_URL}/`,
+    logo: `${SITE_URL}/icon-512.png`,
+    email: "kinhdoanh@evovi.vn",
+    telephone: "+84-868-661-235",
+    description:
+      "Evovi là studio kỹ thuật phần mềm Spec-Driven & AI-Native chuyên tư vấn, thiết kế và xây dựng hệ thống ERP, LMS, OOH, ứng dụng di động hiện trường và tác nhân AI cho doanh nghiệp tại Việt Nam.",
+    areaServed: "VN",
+    address: [
+      { "@type": "PostalAddress", addressLocality: "Hà Nội", addressCountry: "VN" },
+      { "@type": "PostalAddress", addressLocality: "TP. Hồ Chí Minh", addressCountry: "VN" },
+    ],
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: "+84-868-661-235",
+        email: "kinhdoanh@evovi.vn",
+        contactType: "sales",
+        availableLanguage: ["Vietnamese", "English"],
+      },
+      {
+        "@type": "ContactPoint",
+        email: "support@evovi.vn",
+        contactType: "customer support",
+        availableLanguage: ["Vietnamese"],
+      },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    url: `${SITE_URL}/`,
+    name: "Evovi",
+    inLanguage: "vi-VN",
+    publisher: { "@id": `${SITE_URL}/#organization` },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Hệ sinh thái sản phẩm và dự án phần mềm thực tế của Evovi",
+    numberOfItems: EVOVI_PROJECTS.length,
+    itemListElement: EVOVI_PROJECTS.map((p, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      item: {
+        "@type": "SoftwareApplication",
+        name: p.name,
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Web, iOS, Android",
+        description: `${p.tagline}. ${p.solution}`,
+        url: p.href ? `${SITE_URL}${p.href}` : `${SITE_URL}/#ecosystem`,
+        author: { "@id": `${SITE_URL}/#organization` },
+      },
+    })),
+  },
+];
+
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Evovi — Giải pháp phần mềm thiết kế riêng cho doanh nghiệp" },
-      { name: "description", content: "Evovi cung cấp giải pháp phần mềm theo yêu cầu: tư vấn, thiết kế, phát triển web/app, tích hợp API và tối ưu hệ thống cho doanh nghiệp." },
-      { property: "og:title", content: "Evovi — Phần mềm thiết kế riêng cho doanh nghiệp" },
-      { property: "og:description", content: "Giải pháp phần mềm theo yêu cầu, dễ dùng, dễ mở rộng, phù hợp đúng cách bạn đang vận hành." },
-    ],
-    links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" },
-    ],
-  }),
-  component: LandingPage,
+  head: () =>
+    buildSeoHead({
+      title: "Evovi · Phần mềm thiết kế riêng, ERP, LMS & Hệ sinh thái AI cho doanh nghiệp",
+      description:
+        "Evovi thiết kế và phát triển phần mềm theo đúng quy trình vận hành doanh nghiệp: hệ thống OOH Ad Canvas, ERP Elevator360, nền tảng giáo dục số Evo Books, LMS tập đoàn, EvoHub và tác nhân AI.",
+      path: "/",
+      jsonLd: HOME_JSON_LD,
+    }),
+  component: EvoviLandingPage,
 });
 
-function Navbar() {
-  const links = [
-    { href: "#solution", label: "Giải pháp" },
-    { href: "#services", label: "Dịch vụ" },
-    { href: "#process", label: "Quy trình" },
-    { href: "#cases", label: "Dự án" },
-    { href: "#contact", label: "Liên hệ" },
-  ];
-  return (
-    <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/60">
-      <div className="container-x flex h-16 items-center justify-between">
-        <a href="#" className="flex items-center rounded-lg drop-shadow-[0_0_12px_oklch(0.62_0.22_285/0.35)]" aria-label="Evovi">
-          <EvoviLogoIcon size="sm" />
-        </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          {links.map(l => (
-            <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">{l.label}</a>
-          ))}
-        </nav>
-        <a href="#contact" className="inline-flex items-center gap-2 rounded-full bg-primary-gradient text-primary-foreground px-5 py-2.5 text-sm font-semibold shadow-elegant hover:shadow-glow transition-all">
-          Tư vấn miễn phí <ArrowRight className="w-4 h-4" />
-        </a>
-      </div>
-    </header>
-  );
-}
+const SCOPE_PRESETS = [
+  "Hệ thống ERP / CRM vận hành thiết kế riêng",
+  "Nền tảng LMS đào tạo nội bộ & quản trị năng lực",
+  "Hệ thống OOH / Đội xe / App kỹ thuật hiện trường",
+  "Số hóa học liệu EdTech & Tác nhân AI doanh nghiệp",
+] as const;
 
-function Hero() {
-  return (
-    <section className="relative pt-32 pb-24 overflow-hidden bg-hero-gradient text-white">
-      <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <div className="absolute top-20 -left-20 w-96 h-96 rounded-full bg-primary-glow/40 blur-3xl animate-glow" />
-        <div className="absolute bottom-0 right-0 w-[32rem] h-[32rem] rounded-full bg-primary/40 blur-3xl animate-glow" />
-      </div>
-      <div className="container-x relative grid lg:grid-cols-2 gap-12 items-center">
-        <div className="animate-fade-up">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium backdrop-blur">
-            <Sparkles className="w-3.5 h-3.5" /> Phần mềm thiết kế riêng cho doanh nghiệp
-          </span>
-          <h1 className="mt-6 font-display text-4xl md:text-6xl font-bold leading-[1.05]">
-            Giải pháp phần mềm <span className="bg-gradient-to-r from-white to-primary-glow bg-clip-text text-transparent">thiết kế riêng</span> cho doanh nghiệp của bạn
-          </h1>
-          <p className="mt-6 text-lg text-white/75 max-w-xl">
-            Evovi giúp bạn làm việc nhanh hơn, quản lý gọn hơn, dữ liệu rõ ràng hơn. Bạn chỉ cần nói “đang vướng ở đâu” — tụi mình sẽ cùng bạn chốt cách làm đơn giản và hiệu quả.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a href="#contact" className="inline-flex items-center gap-2 rounded-full bg-white text-primary px-6 py-3 font-semibold shadow-elegant hover:shadow-glow transition-all">
-              Nhận tư vấn miễn phí <ArrowRight className="w-4 h-4" />
-            </a>
-            <a href="#services" className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 font-semibold hover:bg-white/10 transition-all">
-              Xem dịch vụ
-            </a>
-          </div>
-          <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
-            {[["50+","Dự án"],["98%","Hài lòng"],["24/7","Hỗ trợ"]].map(([n,l]) => (
-              <div key={l}>
-                <div className="font-display text-2xl md:text-3xl font-bold">{n}</div>
-                <div className="text-xs text-white/60 mt-1">{l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="relative animate-fade-in">
-          <div className="absolute -inset-6 bg-primary-glow/30 blur-3xl rounded-full" />
-          <img
-            src={heroImg}
-            alt="Evovi dashboard"
-            width={1536}
-            height={1024}
-            className="relative rounded-2xl shadow-glow border border-white/10 animate-float"
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
+const RIBBON_ITEMS_A = [
+  "Ad Canvas OOH",
+  "Evo AdTracker",
+  "Elevator360 ERP",
+  "Evo Books Để Học Tốt",
+  "Sách Bài Tập Số NXBGD",
+];
 
-function PainPoints() {
-  const items = [
-    { icon: AlertTriangle, t: "Phần mềm không khớp cách làm việc", d: "Dùng phải “mẫu có sẵn” nên làm vòng vèo, tốn thời gian." },
-    { icon: Workflow, t: "Nhiều file, nhiều nhóm chat", d: "Dữ liệu nằm rải rác, khó tổng hợp và dễ sai." },
-    { icon: Settings2, t: "Hệ thống cũ chậm và hay lỗi", d: "Càng dùng càng ì, sửa mãi không dứt." },
-    { icon: Shield, t: "Lo mất dữ liệu", d: "Thiếu sao lưu/bảo mật rõ ràng nên rủi ro cao." },
-  ];
-  return (
-    <section className="py-24 bg-background">
-      <div className="container-x">
-        <div className="max-w-2xl">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Vấn đề thường gặp</span>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold">Doanh nghiệp đang gặp khó khăn vì đâu?</h2>
-          <p className="mt-4 text-muted-foreground">Đa số không phải vì bạn “làm sai”, mà vì công cụ hiện tại chưa đúng với cách đội ngũ đang vận hành.</p>
-        </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {items.map((it, i) => (
-            <div key={i} className="group p-6 rounded-2xl border border-border bg-card hover:shadow-card-soft hover:-translate-y-1 transition-all">
-              <div className="w-12 h-12 grid place-items-center rounded-xl bg-accent text-primary group-hover:bg-primary-gradient group-hover:text-white transition-all">
-                <it.icon className="w-6 h-6" />
-              </div>
-              <h3 className="mt-4 font-semibold text-lg">{it.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{it.d}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+const RIBBON_ITEMS_B = [
+  "Evo Books Studio",
+  "Evo AI Service",
+  "Enterprise & Public LMS",
+  "EvoHub Agent-Ready",
+  "Evo Chief of Staff",
+];
 
-function Solution() {
-  const steps = [
-    { icon: Search, t: "Hiểu đúng nhu cầu", d: "Ngồi cùng bạn để hiểu quy trình, điểm nghẽn và mục tiêu." },
-    { icon: PenTool, t: "Đề xuất cách làm dễ dùng", d: "Thiết kế màn hình & luồng thao tác rõ ràng, ai cũng dùng được." },
-    { icon: Rocket, t: "Làm nhanh, ra bản dùng sớm", d: "Chia nhỏ theo từng đợt, có bản chạy được sớm để thử và chỉnh." },
-  ];
-  return (
-    <section id="solution" className="py-24 relative overflow-hidden" style={{ background: "var(--gradient-soft)" }}>
-      <div className="container-x grid lg:grid-cols-2 gap-16 items-center">
-        <div>
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Cách Evovi giải quyết</span>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold">Từ bài toán kinh doanh đến giải pháp công nghệ</h2>
-          <p className="mt-4 text-muted-foreground">Evovi không bán “phần mềm đóng gói”. Tụi mình làm theo đúng cách bạn đang vận hành — đơn giản, rõ ràng và có thể mở rộng khi doanh nghiệp lớn lên.</p>
-          <div className="mt-8 space-y-5">
-            {steps.map((s, i) => (
-              <div key={i} className="flex gap-4 p-5 rounded-xl bg-card border border-border shadow-card-soft">
-                <div className="shrink-0 w-12 h-12 grid place-items-center rounded-xl bg-primary-gradient text-white shadow-glow">
-                  <s.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold">{s.t}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{s.d}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="relative">
-          <div className="aspect-square max-w-md mx-auto relative">
-            <div className="absolute inset-0 bg-primary-gradient rounded-[3rem] rotate-6 opacity-20 blur-2xl" />
-            <div className="relative h-full rounded-[2.5rem] bg-card border border-border shadow-elegant p-8 flex flex-col justify-between">
-              {[
-                { icon: Lightbulb, label: "Khảo sát nhu cầu", c: "from-blue-500 to-indigo-500" },
-                { icon: Layers, label: "Thiết kế giải pháp", c: "from-indigo-500 to-purple-500" },
-                { icon: Code2, label: "Xây dựng & kiểm thử", c: "from-purple-500 to-pink-500" },
-                { icon: Zap, label: "Triển khai & tối ưu", c: "from-pink-500 to-orange-400" },
-              ].map((b, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-accent/50">
-                  <div className={`w-10 h-10 grid place-items-center rounded-lg bg-gradient-to-br ${b.c} text-white`}>
-                    <b.icon className="w-5 h-5" />
-                  </div>
-                  <span className="font-semibold">{b.label}</span>
-                  <ChevronRight className="ml-auto w-4 h-4 text-muted-foreground" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+const MANIFESTO_PHRASES = [
+  "Phần mềm tốt không bắt doanh nghiệp sửa mình theo khuôn mẫu đóng gói.",
+  "Tại Evovi, mọi dòng mã đều bắt đầu từ đặc tả nghiệp vụ sống (Spec-Driven),",
+  "vận hành mượt từ bàn điều hành đến nhân sự ngoài hiện trường sóng yếu,",
+  "và sẵn sàng để con người cùng AI mở rộng quy mô gấp mười lần.",
+];
 
-function Services() {
-  const services = [
-    { icon: Lightbulb, t: "Tư vấn & lên phương án", d: "Cùng bạn gỡ rối quy trình và chọn cách làm phù hợp nhất." },
-    { icon: Code2, t: "Làm web / app theo yêu cầu", d: "Giao diện rõ ràng, dùng dễ, chạy mượt." },
-    { icon: Layers, t: "Thiết kế hệ thống", d: "Sắp xếp dữ liệu & luồng xử lý gọn gàng để mở rộng về sau." },
-    { icon: Plug, t: "Kết nối hệ thống đang có", d: "Đồng bộ dữ liệu giữa các công cụ (CRM/ERP/thanh toán…)."},
-    { icon: Wrench, t: "Nâng cấp hệ thống cũ", d: "Sửa chậm/lỗi, tối ưu lại để ổn định và dễ bảo trì." },
-    { icon: Shield, t: "Bảo mật & vận hành", d: "Thiết lập sao lưu, phân quyền, theo dõi hệ thống để yên tâm." },
-  ];
-  return (
-    <section id="services" className="py-24 bg-background">
-      <div className="container-x">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Dịch vụ</span>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold">Một đối tác — đầy đủ giải pháp</h2>
-          <p className="mt-4 text-muted-foreground">Từ ý tưởng đến vận hành, Evovi đồng hành cùng bạn ở mọi giai đoạn.</p>
-        </div>
-        <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((s, i) => (
-            <div key={i} className="group relative p-7 rounded-2xl bg-card border border-border overflow-hidden hover:border-primary/40 hover:-translate-y-1 transition-all shadow-card-soft">
-              <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-primary-gradient opacity-0 group-hover:opacity-20 blur-2xl transition-opacity" />
-              <div className="w-12 h-12 grid place-items-center rounded-xl bg-primary-gradient text-white shadow-glow">
-                <s.icon className="w-6 h-6" />
-              </div>
-              <h3 className="mt-5 font-semibold text-lg">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-              <div className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                Xem chi tiết <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+const CHAPTER_LABELS = [
+  "Khởi nguồn",
+  "Chuyển đổi hệ thống",
+  "Năng lực kỹ thuật",
+  "Hệ sinh thái Evovi",
+  "Quy trình sáu chặng",
+  "Tư vấn triển khai",
+] as const;
 
-function Process() {
-  const steps = [
-    { icon: MessageCircle, t: "Tiếp nhận yêu cầu" },
-    { icon: Search, t: "Phân tích & tư vấn" },
-    { icon: Target, t: "Thiết kế giải pháp" },
-    { icon: Code2, t: "Phát triển" },
-    { icon: Rocket, t: "Triển khai" },
-    { icon: LifeBuoy, t: "Bảo trì" },
-  ];
-  return (
-    <section id="process" className="py-24" style={{ background: "var(--gradient-soft)" }}>
-      <div className="container-x">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Quy trình</span>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold">6 bước — minh bạch từ A đến Z</h2>
-        </div>
-        <div className="mt-14 relative">
-          <div className="hidden lg:block absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-            {steps.map((s, i) => (
-              <div key={i} className="text-center relative">
-                <div className="mx-auto w-24 h-24 grid place-items-center rounded-2xl bg-card border border-border shadow-card-soft relative z-10">
-                  <s.icon className="w-8 h-8 text-primary" />
-                  <span className="absolute -top-2 -right-2 w-7 h-7 grid place-items-center rounded-full bg-primary-gradient text-white text-xs font-bold shadow-glow">{i+1}</span>
-                </div>
-                <h3 className="mt-4 font-semibold text-sm">{s.t}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+function EvoviLandingPage() {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
+  const heroScrollProgressRef = useRef<number>(0);
+  const ribbonARef = useRef<HTMLDivElement | null>(null);
+  const ribbonBRef = useRef<HTMLDivElement | null>(null);
 
-function CaseStudies() {
-  const cases = [
-    {
-      tag: "Quản lý sản xuất",
-      t: "Tự động hoá vận hành nhà máy 500+ nhân sự",
-      problem: "Quản lý sản xuất rời rạc trên Excel, sai sót cao.",
-      result: "Giảm 60% thao tác thủ công, tăng 35% hiệu suất.",
-      stats: [["−60%","Thao tác"],["+35%","Hiệu suất"],["3 tháng","Triển khai"]],
-    },
-    {
-      tag: "Thanh toán",
-      t: "Nền tảng thanh toán cho startup tăng trưởng nhanh",
-      problem: "Hệ thống cũ không scale, downtime cao mùa cao điểm.",
-      result: "Xử lý 1M+ giao dịch/ngày, uptime 99.99%.",
-      stats: [["1M+","Tx/ngày"],["99.99%","Uptime"],["−45%","Cost"]],
-    },
-    {
-      tag: "Chăm sóc khách hàng",
-      t: "Tích hợp CRM đa kênh cho chuỗi 80 cửa hàng",
-      problem: "Dữ liệu khách hàng phân mảnh giữa các kênh.",
-      result: "Tăng 28% repeat-rate nhờ insight thống nhất.",
-      stats: [["+28%","Repeat"],["80","Cửa hàng"],["6 tuần","Go-live"]],
-    },
-  ];
-  return (
-    <section id="cases" className="py-24 bg-background">
-      <div className="container-x">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="max-w-xl">
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Dự án tiêu biểu</span>
-            <h2 className="mt-3 text-3xl md:text-4xl font-bold">Kết quả thực tế, đo lường được</h2>
-          </div>
-          <p className="text-muted-foreground max-w-md">Một vài dự án tiêu biểu Evovi đã đồng hành cùng khách hàng.</p>
-        </div>
-        <div className="mt-14 grid lg:grid-cols-3 gap-6">
-          {cases.map((c, i) => (
-            <article key={i} className="group p-7 rounded-2xl bg-card border border-border shadow-card-soft hover:shadow-elegant transition-all">
-              <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-accent text-primary">{c.tag}</span>
-              <h3 className="mt-4 font-semibold text-xl leading-snug">{c.t}</h3>
-              <div className="mt-5 space-y-3 text-sm">
-                <p><span className="font-semibold text-foreground">Vấn đề: </span><span className="text-muted-foreground">{c.problem}</span></p>
-                <p><span className="font-semibold text-foreground">Kết quả: </span><span className="text-muted-foreground">{c.result}</span></p>
-              </div>
-              <div className="mt-6 grid grid-cols-3 gap-3 pt-5 border-t border-border">
-                {c.stats.map(([n,l]) => (
-                  <div key={l}>
-                    <div className="font-display text-lg font-bold text-gradient">{n}</div>
-                    <div className="text-xs text-muted-foreground mt-1">{l}</div>
-                  </div>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function WhyEvovi() {
-  const items = [
-    { icon: Cog, t: "Làm theo đúng nhu cầu", d: "Không ép bạn theo khuôn mẫu có sẵn." },
-    { icon: TrendingUp, t: "Chi phí hợp lý", d: "Làm đúng phần cần làm trước, mở rộng sau." },
-    { icon: Clock, t: "Có bản dùng sớm", d: "Ra bản chạy được sớm để thử ngay." },
-    { icon: LifeBuoy, t: "Có người hỗ trợ", d: "Sau khi chạy thật vẫn có đội ngũ đồng hành." },
-    { icon: Shield, t: "An toàn dữ liệu", d: "Phân quyền, sao lưu, theo dõi hệ thống rõ ràng." },
-    { icon: CheckCircle2, t: "Minh bạch tiến độ", d: "Mỗi giai đoạn đều rõ việc – rõ thời gian – rõ kết quả." },
-  ];
-  return (
-    <section className="py-24 bg-hero-gradient text-white relative overflow-hidden">
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] rounded-full bg-primary-glow/30 blur-3xl" />
-      </div>
-      <div className="container-x relative">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="text-sm font-semibold text-primary-glow uppercase tracking-wider">Vì sao chọn Evovi</span>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold">Đối tác công nghệ — không chỉ là nhà cung cấp</h2>
-        </div>
-        <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((it, i) => (
-            <div key={i} className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur hover:bg-white/10 transition-colors">
-              <div className="w-11 h-11 grid place-items-center rounded-xl bg-white/10">
-                <it.icon className="w-5 h-5 text-primary-glow" />
-              </div>
-              <h3 className="mt-4 font-semibold">{it.t}</h3>
-              <p className="mt-2 text-sm text-white/70">{it.d}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  const items = [
-    { q: "Evovi không chỉ code — họ thực sự hiểu bài toán kinh doanh của chúng tôi.", n: "Nguyễn Minh Anh", r: "CEO, RetailPro" },
-    { q: "Hệ thống chạy ổn định, đội ngũ hỗ trợ nhanh và chuyên nghiệp.", n: "Trần Hữu Phúc", r: "CTO, FintechX" },
-    { q: "Sản phẩm scale tốt khi user tăng 10x mà không cần viết lại.", n: "Lê Thị Hương", r: "Founder, EduNow" },
-  ];
-  return (
-    <section className="py-24 bg-background">
-      <div className="container-x">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Khách hàng nói gì</span>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold">Niềm tin từ những doanh nghiệp tăng trưởng</h2>
-        </div>
-        <div className="mt-14 grid md:grid-cols-3 gap-6">
-          {items.map((t, i) => (
-            <div key={i} className="p-7 rounded-2xl bg-card border border-border shadow-card-soft relative">
-              <Quote className="w-8 h-8 text-primary/30 absolute top-5 right-5" />
-              <p className="text-foreground/90 leading-relaxed">"{t.q}"</p>
-              <div className="mt-6 flex items-center gap-3 pt-5 border-t border-border">
-                <div className="w-11 h-11 grid place-items-center rounded-full bg-primary-gradient text-white font-bold">
-                  {t.n[0]}
-                </div>
-                <div>
-                  <div className="font-semibold text-sm">{t.n}</div>
-                  <div className="text-xs text-muted-foreground">{t.r}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ContactCTA() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeChapter, setActiveChapter] = useState(0);
+  const [activeBeatIndex, setActiveBeatIndex] = useState(0);
+  const [activeCapabilityIdx, setActiveCapabilityIdx] = useState(0);
+  const [needText, setNeedText] = useState("");
+  const [selectedPreset, setSelectedPreset] = useState<string>(SCOPE_PRESETS[0]);
   const [submitted, setSubmitted] = useState(false);
+
+  const handleSelectProjectScope = (preset: string) => {
+    setSelectedPreset(preset);
+    setNeedText(preset);
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const rootEl = rootRef.current;
+    if (!rootEl) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let ribbonRaf = 0;
+    let lastScrollY = window.scrollY;
+    let scrollVelocity = 0;
+
+    const onScroll = () => {
+      const nextY = window.scrollY;
+      scrollVelocity = nextY - lastScrollY;
+      lastScrollY = nextY;
+    };
+
+    if (!reducedMotion) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+    }
+
+    const ctx = gsap.context(() => {
+      // 0. Global Tri-Spectrum scroll progress thread
+      if (progressBarRef.current) {
+        gsap.set(progressBarRef.current, { scaleX: 0, transformOrigin: "left center" });
+        ScrollTrigger.create({
+          trigger: rootEl,
+          start: "top top",
+          end: "bottom bottom",
+          onUpdate: (self) => {
+            if (progressBarRef.current) {
+              progressBarRef.current.style.transform = `scaleX(${self.progress.toFixed(4)})`;
+            }
+          },
+        });
+      }
+
+      // Chapter indicator sync
+      const chapterSections = gsap.utils.toArray<HTMLElement>("[data-chapter]", rootEl);
+      chapterSections.forEach((sec, idx) => {
+        ScrollTrigger.create({
+          trigger: sec,
+          start: "top 48%",
+          end: "bottom 48%",
+          onEnter: () => setActiveChapter(idx),
+          onEnterBack: () => setActiveChapter(idx),
+        });
+      });
+
+      if (reducedMotion) return;
+
+      // 1. Act I: Crisp masked hero headline entrance (settled well under 0.6s) + scroll-out signal stream
+      const heroLines = gsap.utils.toArray<HTMLElement>("[data-hero-line]", rootEl);
+      const heroMeta = gsap.utils.toArray<HTMLElement>("[data-hero-fade]", rootEl);
+
+      gsap.fromTo(
+        heroLines,
+        { yPercent: 95 },
+        {
+          yPercent: 0,
+          duration: 0.48,
+          stagger: 0.06,
+          ease: "expo.out",
+          delay: 0.02,
+        },
+      );
+
+      gsap.fromTo(
+        heroMeta,
+        { y: 10, opacity: 0.45 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.42,
+          stagger: 0.04,
+          ease: "power2.out",
+          delay: 0.04,
+        },
+      );
+
+      ScrollTrigger.create({
+        trigger: "[data-hero-stage]",
+        start: "top top",
+        end: "bottom top",
+        scrub: 0.45,
+        onUpdate: (self) => {
+          heroScrollProgressRef.current = self.progress;
+        },
+      });
+
+      gsap.fromTo(
+        "[data-handoff-beam]",
+        { scaleY: 0.2, transformOrigin: "top center" },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "[data-hero-stage]",
+            start: "top top",
+            end: "bottom 35%",
+            scrub: 0.45,
+          },
+        },
+      );
+
+      // 2. Act II: Continuous vertical conduit + active beat sync
+      gsap.fromTo(
+        "[data-act2-conduit]",
+        { scaleY: 0.08, transformOrigin: "top center" },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "[data-act2-list]",
+            start: "top 70%",
+            end: "bottom 50%",
+            scrub: 0.45,
+          },
+        },
+      );
+
+      const beatCards = gsap.utils.toArray<HTMLElement>("[data-beat-item]", rootEl);
+      beatCards.forEach((el, idx) => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 58%",
+          end: "bottom 45%",
+          onEnter: () => setActiveBeatIndex(idx),
+          onEnterBack: () => setActiveBeatIndex(idx),
+        });
+      });
+
+      // 3. Act III: Scroll-scrubbed Ink-Fill Manifesto + Mosaic Parallax
+      const inkSpans = gsap.utils.toArray<HTMLElement>("[data-ink-phrase]", rootEl);
+      if (inkSpans.length > 0) {
+        gsap.fromTo(
+          inkSpans,
+          { opacity: 0.28 },
+          {
+            opacity: 1,
+            stagger: 0.22,
+            ease: "none",
+            scrollTrigger: {
+              trigger: "[data-manifesto-block]",
+              start: "top 78%",
+              end: "bottom 48%",
+              scrub: 0.4,
+            },
+          },
+        );
+      }
+
+      gsap.fromTo(
+        "[data-mosaic-img]",
+        { scale: 1.08 },
+        {
+          scale: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "[data-mosaic-grid]",
+            start: "top 85%",
+            end: "bottom 20%",
+            scrub: 0.5,
+          },
+        },
+      );
+
+      // 4. Act IV: Scrubbed Inner Image Zoom inside Flush Dual-Photo Architectural Window
+      const expandImgs = gsap.utils.toArray<HTMLElement>("[data-expand-img]", rootEl);
+      if (expandImgs.length > 0) {
+        gsap.fromTo(
+          expandImgs,
+          { scale: 1.08 },
+          {
+            scale: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: "[data-expand-window]",
+              start: "top 88%",
+              end: "bottom 25%",
+              scrub: 0.45,
+            },
+          },
+        );
+      }
+
+      const projectRows = gsap.utils.toArray<HTMLElement>("[data-project-row]", rootEl);
+      projectRows.forEach((row) => {
+        gsap.fromTo(
+          row,
+          { y: 20 },
+          {
+            y: 0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: row,
+              start: "top 92%",
+              end: "top 65%",
+              scrub: 0.35,
+            },
+          },
+        );
+      });
+
+      // 5. Act V: 6-Step Spec-Driven Conduit Scrub
+      gsap.fromTo(
+        "[data-process-conduit]",
+        { scaleY: 0.06, transformOrigin: "top center" },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "[data-process-track]",
+            start: "top 72%",
+            end: "bottom 52%",
+            scrub: 0.45,
+          },
+        },
+      );
+
+      const stepNodes = gsap.utils.toArray<HTMLElement>("[data-process-step]", rootEl);
+      stepNodes.forEach((stepEl) => {
+        gsap.fromTo(
+          stepEl,
+          { y: 18 },
+          {
+            y: 0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: stepEl,
+              start: "top 86%",
+              end: "top 58%",
+              scrub: 0.35,
+            },
+          },
+        );
+      });
+    }, rootEl);
+
+    // Velocity-reactive counter-scrolling ribbons (compositor translate3d only)
+    if (!reducedMotion) {
+      let posA = 0;
+      let posB = -50;
+      let smoothVel = 0;
+
+      const tickRibbons = () => {
+        smoothVel += (scrollVelocity - smoothVel) * 0.1;
+        scrollVelocity *= 0.88;
+        const boost = Math.min(2.4, Math.abs(smoothVel) * 0.05);
+        const dir = smoothVel < -0.5 ? -1 : 1;
+
+        posA -= (0.032 + boost * 0.085) * dir;
+        posB += (0.032 + boost * 0.085) * dir;
+
+        if (posA <= -50) posA += 50;
+        if (posA > 0) posA -= 50;
+        if (posB >= 0) posB -= 50;
+        if (posB < -50) posB += 50;
+
+        if (ribbonARef.current) {
+          ribbonARef.current.style.transform = `translate3d(${posA.toFixed(3)}%, 0, 0)`;
+        }
+        if (ribbonBRef.current) {
+          ribbonBRef.current.style.transform = `translate3d(${posB.toFixed(3)}%, 0, 0)`;
+        }
+        ribbonRaf = window.requestAnimationFrame(tickRibbons);
+      };
+      ribbonRaf = window.requestAnimationFrame(tickRibbons);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(ribbonRaf);
+      window.removeEventListener("scroll", onScroll);
+      ctx.revert();
+    };
+  }, []);
+
+  const navItems = [
+    { href: "#solution", label: "Chuyển đổi" },
+    { href: "#services", label: "Năng lực" },
+    { href: "#cases", label: "Tiêu biểu" },
+    { href: "#ecosystem", label: "9 Dự án Evovi" },
+    { href: "#process", label: "Quy trình" },
+  ];
+
   return (
-    <section id="contact" className="py-24" style={{ background: "var(--gradient-soft)" }}>
-      <div className="container-x">
-        <div className="relative overflow-hidden rounded-3xl bg-hero-gradient text-white p-8 md:p-14 shadow-elegant">
-          <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-primary-glow/40 blur-3xl" />
-          <div className="relative grid lg:grid-cols-2 gap-12">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-bold leading-tight">Đặt lịch tư vấn ngay hôm nay</h2>
-              <p className="mt-5 text-white/75 max-w-md">Bạn không cần biết kỹ thuật. Chỉ cần mô tả vấn đề đang gặp — Evovi sẽ gợi ý hướng làm rõ ràng và dễ triển khai.</p>
-              <div className="mt-8 space-y-4 text-sm">
-                <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-primary-glow shrink-0" />
-                  <a href="mailto:kinhdoanh@evovi.vn" className="hover:text-white transition-colors">kinhdoanh@evovi.vn</a>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-primary-glow shrink-0" />
-                  <span>Hotline 24/7: <a href="tel:0868661235" className="hover:text-white transition-colors">0868661235</a></span>
-                </div>
-                <div className="flex items-center gap-3"><MapPin className="w-4 h-4 text-primary-glow" /> Hà Nội · TP. Hồ Chí Minh</div>
+    <div ref={rootRef} className="min-h-svh bg-[#eef2f6] text-[#0b1320]">
+      {/* PERSISTENT ARCHITECTURAL HEADER + TRI-SPECTRUM PROGRESS THREAD */}
+      <header className="fixed inset-x-0 top-0 z-50 bg-[#070d18] text-[#f4f7fb]">
+        <div className="container-evo flex h-16 items-center justify-between gap-3">
+          <div className="flex items-center gap-5">
+            <a href="#top" aria-label="Trang chủ Evovi" className="inline-flex items-center">
+              <EvoviLogoIcon size="sm" surface="tile" />
+            </a>
+            <span className="hidden text-evo-small font-medium text-[#a6b4c8] xl:inline-block">
+              Mạch nội dung: {CHAPTER_LABELS[activeChapter]}
+            </span>
+          </div>
+
+          <nav
+            aria-label="Điều hướng chính"
+            className="hidden items-center gap-7 text-evo-small font-medium text-[#a6b4c8] lg:flex"
+          >
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="transition-colors hover:text-[#f4f7fb]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2.5">
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-1.5 rounded-md bg-[#095fd6] px-3.5 py-2 text-evo-small font-semibold text-white transition-colors hover:bg-[#2480ff] sm:px-4"
+            >
+              <span>Nhận tư vấn</span>
+              <span className="hidden sm:inline">kỹ thuật</span>
+              <span aria-hidden="true">→</span>
+            </a>
+            <button
+              type="button"
+              aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#0d1728] text-[#f4f7fb] lg:hidden"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Continuous Tri-Spectrum Scroll Progress Thread */}
+        <div className="h-[3px] w-full bg-[#0d1728]">
+          <div
+            ref={progressBarRef}
+            className="grid h-full w-full grid-cols-3 will-change-transform"
+          >
+            <span className="bg-[#f59422]" />
+            <span className="bg-[#2480ff]" />
+            <span className="bg-[#3cb34a]" />
+          </div>
+        </div>
+
+        {mobileMenuOpen && (
+          <div className="bg-[#0d1728] px-5 py-5 lg:hidden">
+            <div className="flex flex-col gap-3.5 text-evo-body font-medium text-[#f4f7fb]">
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-1 text-[#f4f7fb]"
+                >
+                  {item.label}
+                </a>
+              ))}
+              <a
+                href="#contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-[#095fd6] px-4 py-3 text-evo-small font-semibold text-white"
+              >
+                Đặt lịch tư vấn miễn phí →
+              </a>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main id="top">
+        {/* =========================================================
+            ACT I: HERO - TRI-SPECTRUM CONVERGENCE & 42% AXIS STATEMENT
+           ========================================================= */}
+        <section
+          data-chapter="0"
+          data-hero-stage
+          className="relative flex min-h-svh flex-col justify-between overflow-hidden bg-[#070d18] pt-22 pb-10 text-[#f4f7fb] md:pt-28 md:pb-14"
+        >
+          <HeroTriSpectrumCanvas scrollProgressRef={heroScrollProgressRef} />
+
+          {/* Upper masthead coordinate bar aligned symmetrically on 56px left & right margins */}
+          <div className="container-evo relative z-10">
+            <div className="grid gap-3 lg:grid-cols-12 lg:items-center">
+              <div className="lg:col-span-5" data-hero-fade>
+                <span className="inline-flex items-center gap-2 rounded bg-[#0d1728] px-3.5 py-1.5 text-evo-small font-medium text-[#f4f7fb]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#3cb34a]" />
+                  Evovi Engineering Studio · Hà Nội & TP. Hồ Chí Minh
+                </span>
+              </div>
+              <div className="hidden lg:col-span-7 lg:block lg:text-right" data-hero-fade>
+                <p className="text-evo-small font-medium text-[#a6b4c8]">
+                  Kiến trúc Spec-Driven · SaaS đa tổ chức · Ứng dụng hiện trường · Tác nhân AI
+                </p>
               </div>
             </div>
-            <form
-              onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
-              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 md:p-8 space-y-4"
-            >
-              {submitted ? (
-                <div className="text-center py-10">
-                  <CheckCircle2 className="w-14 h-14 mx-auto text-primary-glow" />
-                  <h3 className="mt-4 text-xl font-semibold">Đã gửi thành công!</h3>
-                  <p className="mt-2 text-white/70 text-sm">Evovi sẽ liên hệ sớm để hẹn lịch trao đổi.</p>
+          </div>
+
+          {/* Statement anchored to lower third on 42% axis (Headline + sentence + CTA visible on first phone screen!) */}
+          <div className="container-evo relative z-10 mt-10 md:mt-28">
+            <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+              {/* Left of 42% axis */}
+              <div className="order-2 lg:order-1 lg:col-span-5" data-hero-fade>
+                <p className="max-w-[38ch] text-evo-body text-[#a6b4c8]">
+                  Evovi thiết kế và xây dựng phần mềm khớp 100% cách doanh nghiệp bạn vận hành, từ cổng quản trị Web đến ứng dụng hiện trường và tác nhân AI.
+                </p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href="#contact"
+                    className="inline-flex items-center gap-2 rounded-md bg-[#095fd6] px-5 py-3 text-evo-small font-semibold text-white transition-colors hover:bg-[#2480ff] sm:px-6 sm:py-3.5"
+                  >
+                    Nhận tư vấn & phác thảo giải pháp →
+                  </a>
+                  <a
+                    href="#ecosystem"
+                    className="inline-flex items-center gap-2 rounded-md bg-[#0d1728] px-5 py-3 text-evo-small font-semibold text-[#f4f7fb] transition-colors hover:bg-[#142238] sm:py-3.5"
+                  >
+                    Xem 9 hệ thống thực tế
+                  </a>
                 </div>
-              ) : (
-                <>
-                  {[
-                    { n: "name", t: "text", l: "Họ và tên", p: "Nguyễn Văn A" },
-                    { n: "company", t: "text", l: "Tên công ty", p: "Công ty TNHH ABC" },
-                    { n: "email", t: "email", l: "Email", p: "you@company.com" },
-                    { n: "phone", t: "tel", l: "Số điện thoại", p: "0909 000 000" },
-                  ].map(f => (
-                    <div key={f.n}>
-                      <label className="block text-xs font-medium mb-1.5 text-white/80">{f.l}</label>
-                      <input required type={f.t} name={f.n} placeholder={f.p} maxLength={255}
-                        className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-primary-glow focus:bg-white/15 transition" />
+              </div>
+
+              {/* Right from 42% axis: Masked 2-Line Display Headline */}
+              <div className="order-1 lg:order-2 lg:col-span-7">
+                <h1 className="font-display text-evo-hero font-extrabold text-[#f4f7fb]">
+                  <span className="evo-line-mask">
+                    <span data-hero-line className="evo-line-inner">
+                      Phần mềm riêng,
+                    </span>
+                  </span>
+                  <span className="evo-line-mask">
+                    <span data-hero-line className="evo-line-inner text-[#f59422]">
+                      vận hành bứt phá.
+                    </span>
+                  </span>
+                </h1>
+
+                {/* Editorial programme facts strip (open architectural columns, compact 3-col on mobile too) */}
+                <div
+                  data-hero-fade
+                  className="mt-8 grid grid-cols-3 gap-4 bg-[#0d1728] p-4 sm:gap-6 sm:p-5"
+                >
+                  <div>
+                    <div className="font-display text-evo-h3 font-bold text-[#f4f7fb] tabular-nums">
+                      9 hệ thống
                     </div>
+                    <div className="mt-1 text-evo-small text-[#a6b4c8]">
+                      Đang chạy thực tế
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-display text-evo-h3 font-bold text-[#f4f7fb] tabular-nums">
+                      39 kho mã
+                    </div>
+                    <div className="mt-1 text-evo-small text-[#a6b4c8]">
+                      Web, Mobile & AI
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-display text-evo-h3 font-bold text-[#3cb34a] tabular-nums">
+                      24/7 SLA
+                    </div>
+                    <div className="mt-1 text-evo-small text-[#a6b4c8]">
+                      Đồng hành kỹ thuật
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Downward Signal Handoff Conduit into Act II */}
+            <div className="mt-8 hidden items-center justify-between gap-4 sm:flex lg:ml-[41.666%]">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-[2px] overflow-hidden bg-[#142238]">
+                  <div data-handoff-beam className="h-full w-full bg-[#f59422]" />
+                </div>
+                <span className="text-evo-small font-medium text-[#a6b4c8]">
+                  Cuộn xuống để trải nghiệm mạch kiến trúc liên tiếp
+                </span>
+              </div>
+              <span className="text-evo-small font-medium text-[#a6b4c8]">
+                Evovi · Spec-Driven AI-Native
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            ACT II: CHAOS-TO-SYSTEM SPLIT STAGE
+           ========================================================= */}
+        <section
+          id="solution"
+          data-chapter="1"
+          className="bg-[#eef2f6] py-20 text-[#0b1320] md:py-28"
+        >
+          <div className="container-evo">
+            <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-5">
+                <p className="max-w-[36ch] text-evo-body text-[#465468]">
+                  Đa số doanh nghiệp chậm lại không phải vì đội ngũ thiếu nỗ lực, mà vì công cụ hiện tại rời rạc so với tốc độ phát triển thực tế.
+                </p>
+              </div>
+              <div className="lg:col-span-7">
+                <h2 className="font-display text-evo-h2 font-extrabold text-[#0b1320]">
+                  Gỡ điểm nghẽn, nối liền vận hành
+                </h2>
+              </div>
+            </div>
+
+            <div className="mt-14 grid gap-10 lg:grid-cols-12 lg:items-start">
+              {/* Left 42%: Open architectural list along scrubbed vertical conduit (single active highlight) */}
+              <div data-act2-list className="relative pl-6 lg:col-span-5">
+                <div className="absolute top-2 bottom-2 left-0 w-[3px] bg-[#cdd7e5]">
+                  <div
+                    data-act2-conduit
+                    className="h-full w-full bg-[#095fd6] will-change-transform"
+                  />
+                </div>
+
+                <div className="space-y-6">
+                  {TRANSFORMATION_BEATS.map((beat, idx) => {
+                    const active = idx === activeBeatIndex;
+                    return (
+                      <div
+                        key={beat.painTitle}
+                        data-beat-item
+                        onClick={() => setActiveBeatIndex(idx)}
+                        className={`cursor-pointer transition-colors ${
+                          active
+                            ? "bg-white p-6"
+                            : "bg-transparent py-3 pr-4 pl-2 hover:text-[#095fd6]"
+                        }`}
+                      >
+                        <h3 className="font-display text-evo-h3 font-bold text-[#0b1320]">
+                          {beat.painTitle}
+                        </h3>
+                        <p className="mt-2 text-evo-body text-[#465468]">
+                          {beat.painDesc}
+                        </p>
+                        <p className="mt-3 text-evo-small font-semibold text-[#095fd6]">
+                          Hiệu quả chuyển đổi: {beat.metricBefore} → {beat.metricAfter}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right 58%: Sticky Live Transformer Console */}
+              <div className="lg:sticky lg:top-24 lg:col-span-7">
+                <SystemTransformerStage
+                  activeIndex={activeBeatIndex}
+                  onSelectBeat={setActiveBeatIndex}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            ACT III: INK-FILL MANIFESTO + GUTTERLESS MOSAIC + CAPABILITIES
+           ========================================================= */}
+        <section
+          id="services"
+          data-chapter="2"
+          className="bg-[#dfe6ef] py-20 text-[#0b1320] md:py-28"
+        >
+          <div className="container-evo">
+            {/* Scroll-scrubbed Ink-Fill Manifesto on 42% axis */}
+            <div data-manifesto-block className="grid gap-8 lg:grid-cols-12">
+              <div className="lg:col-span-5">
+                <p className="max-w-[34ch] text-evo-body text-[#465468]">
+                  Phương pháp luận kỹ thuật Spec-Driven thống nhất đứng sau toàn bộ sản phẩm của Evovi.
+                </p>
+              </div>
+              <div className="lg:col-span-7">
+                <blockquote className="font-display text-[clamp(1.25rem,2vw,1.9rem)] font-bold leading-[1.32] tracking-[-0.02em] text-[#0b1320]">
+                  {MANIFESTO_PHRASES.map((phrase, idx) => (
+                    <span key={idx} data-ink-phrase className="mr-2 inline">
+                      {phrase}
+                    </span>
                   ))}
+                </blockquote>
+              </div>
+            </div>
+
+            {/* Gutterless 4-Cell Editorial Mosaic (Numeral first at top-left, caption beneath!) */}
+            <div
+              data-mosaic-grid
+              className="mt-16 grid overflow-hidden lg:grid-cols-12"
+            >
+              {/* Cell 1: Studio Architecture Photograph (7 cols) */}
+              <div className="overflow-hidden bg-[#070d18] lg:col-span-7">
+                <img
+                  data-mosaic-img
+                  src={studioBlueprintImg}
+                  alt="Bàn thiết kế kiến trúc mô-đun phần mềm tại studio kỹ thuật Evovi"
+                  width={1440}
+                  height={810}
+                  loading="lazy"
+                  className="h-full min-h-[280px] w-full object-cover will-change-transform"
+                />
+              </div>
+
+              {/* Cell 2: Flat Electric Cobalt Block (5 cols) */}
+              <div className="flex flex-col justify-between bg-[#095fd6] p-8 text-white md:p-10 lg:col-span-5">
+                <div className="font-display text-evo-hero font-extrabold tabular-nums">
+                  100%
+                </div>
+                <p className="mt-8 max-w-[36ch] text-evo-body text-white">
+                  Dự án khởi đầu bằng tài liệu đặc tả nghiệp vụ sống và ma trận phân quyền rõ ràng để đội vận hành và kỹ sư nói chung một ngôn ngữ.
+                </p>
+              </div>
+
+              {/* Cell 3: Flat Solar Orange Block (5 cols) */}
+              <div className="flex flex-col justify-between bg-[#f59422] p-8 text-[#070d18] md:p-10 lg:col-span-5">
+                <div className="font-display text-evo-h2 font-extrabold">
+                  Web · App · AI
+                </div>
+                <p className="mt-8 max-w-[36ch] text-evo-body font-medium text-[#070d18]">
+                  Đồng nhất từ cổng điều hành React 19, ứng dụng hiện trường Flutter và Expo tới dịch vụ AI FastAPI có kiểm duyệt an toàn.
+                </p>
+              </div>
+
+              {/* Cell 4: Flat Obsidian Block (7 cols) */}
+              <div className="flex flex-col justify-between bg-[#070d18] p-8 text-[#f4f7fb] md:p-10 lg:col-span-7">
+                <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <label className="block text-xs font-medium mb-1.5 text-white/80">Chức vụ</label>
-                    <select required name="role" defaultValue=""
-                      className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-glow focus:bg-white/15 transition appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>')] bg-no-repeat bg-[right_1rem_center]">
-                      <option value="" disabled className="text-foreground">-- Chọn chức vụ --</option>
-                      <option value="ceo" className="text-foreground">CEO / Founder</option>
-                      <option value="cto" className="text-foreground">CTO / Tech Lead</option>
-                      <option value="manager" className="text-foreground">Quản lý / Trưởng phòng</option>
-                      <option value="product" className="text-foreground">Product Manager</option>
-                      <option value="marketing" className="text-foreground">Marketing / Sales</option>
-                      <option value="developer" className="text-foreground">Developer / Engineer</option>
-                      <option value="other" className="text-foreground">Khác</option>
-                    </select>
+                    <h3 className="font-display text-evo-h3 font-bold">
+                      Ra bản chạy thật sớm
+                    </h3>
+                    <p className="mt-2.5 text-evo-body text-[#a6b4c8]">
+                      Chia lộ trình theo từng phân hệ cốt lõi để đội ngũ trải nghiệm sớm, đo hiệu quả ngay trên công việc hằng ngày.
+                    </p>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1.5 text-white/80">Nhu cầu</label>
-                    <textarea required rows={3} name="need" maxLength={1000} placeholder="Bạn đang gặp vấn đề gì? Ví dụ: quản lý đơn hàng, quản lý kho, báo cáo, chăm sóc khách hàng..."
-                      className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-primary-glow focus:bg-white/15 transition resize-none" />
+                    <h3 className="font-display text-evo-h3 font-bold">
+                      Hạ tầng tự động hóa IaC
+                    </h3>
+                    <p className="mt-2.5 text-evo-body text-[#a6b4c8]">
+                      Triển khai chuẩn Terraform, Docker, sao lưu định kỳ và cô lập dữ liệu từng tổ chức khách hàng.
+                    </p>
                   </div>
-                  <button type="submit" className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white text-primary px-6 py-3.5 font-semibold hover:shadow-glow transition-all">
-                    Gửi thông tin để được gọi lại <ArrowRight className="w-4 h-4" />
-                  </button>
-                </>
-              )}
-            </form>
+                </div>
+              </div>
+            </div>
+
+            {/* 6 Core Capabilities on 42% Axis: Open Editorial Index (only 1 active dark surface) */}
+            <div className="mt-20 grid gap-12 lg:grid-cols-12 lg:items-start">
+              <div className="lg:sticky lg:top-24 lg:col-span-5">
+                <h2 className="font-display text-evo-h2 font-extrabold text-[#0b1320]">
+                  Đồng hành trọn vòng đời hệ thống
+                </h2>
+                <p className="mt-4 max-w-[36ch] text-evo-body text-[#465468]">
+                  Chạm vào từng năng lực để xem gói bàn giao kỹ thuật cụ thể mà đội ngũ Evovi thiết lập cho doanh nghiệp.
+                </p>
+
+                <div className="mt-8 overflow-hidden bg-[#070d18]">
+                  <img
+                    src={factoryOpsImg}
+                    alt="Kỹ sư điều hành giám sát hệ thống vận hành số hóa trên máy tính bảng tại doanh nghiệp"
+                    width={1080}
+                    height={1440}
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 lg:col-span-7">
+                {CAPABILITIES.map((cap, idx) => {
+                  const isSelected = idx === activeCapabilityIdx;
+                  return (
+                    <div
+                      key={cap.title}
+                      onMouseEnter={() => setActiveCapabilityIdx(idx)}
+                      onClick={() => setActiveCapabilityIdx(idx)}
+                      className={`cursor-pointer border-l-4 transition-colors ${
+                        isSelected
+                          ? "border-[#f59422] bg-[#070d18] p-6 text-[#f4f7fb] md:p-7"
+                          : "border-[#b8c6d9] bg-transparent py-4 pr-4 pl-6 text-[#0b1320] hover:border-[#095fd6]"
+                      }`}
+                    >
+                      <h3 className="font-display text-evo-h3 font-bold">
+                        {cap.title}
+                      </h3>
+                      <p
+                        className={`mt-2 max-w-[60ch] text-evo-body ${
+                          isSelected ? "text-[#a6b4c8]" : "text-[#465468]"
+                        }`}
+                      >
+                        {cap.summary}
+                      </p>
+                      <p
+                        className={`mt-3 text-evo-small font-semibold ${
+                          isSelected ? "text-[#3cb34a]" : "text-[#095fd6]"
+                        }`}
+                      >
+                        Bàn giao: {cap.deliverable}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            VELOCITY-DRIVEN COUNTER-SCROLLING KINETIC RIBBONS BRIDGE
+            (Clipped inside container-evo margin so text never touches viewport edge)
+           ========================================================= */}
+        <div aria-hidden="true" className="bg-[#070d18] py-4 select-none">
+          <div className="container-evo space-y-2">
+            <div className="overflow-hidden bg-[#f59422] py-3 text-[#070d18]">
+              <div ref={ribbonARef} className="evo-ribbon-track">
+                {[...RIBBON_ITEMS_A, ...RIBBON_ITEMS_A, ...RIBBON_ITEMS_A, ...RIBBON_ITEMS_A].map(
+                  (item, i) => (
+                    <span
+                      key={i}
+                      className="mx-6 font-display text-evo-h3 font-extrabold"
+                    >
+                      {item} <span className="ml-6 font-bold">/</span>
+                    </span>
+                  ),
+                )}
+              </div>
+            </div>
+            <div className="overflow-hidden bg-[#0d1728] py-3 text-[#f4f7fb]">
+              <div ref={ribbonBRef} className="evo-ribbon-track">
+                {[...RIBBON_ITEMS_B, ...RIBBON_ITEMS_B, ...RIBBON_ITEMS_B, ...RIBBON_ITEMS_B].map(
+                  (item, i) => (
+                    <span
+                      key={i}
+                      className="mx-6 font-display text-evo-h3 font-bold"
+                    >
+                      {item} <span className="ml-6 font-bold text-[#2480ff]">/</span>
+                    </span>
+                  ),
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
-function Footer() {
-  return (
-    <footer className="bg-foreground text-background/80 py-14">
-      <div className="container-x grid md:grid-cols-5 gap-10">
-        <div className="md:col-span-2">
-          <div className="flex items-center">
-            <EvoviLogoIcon size="md" />
+        {/* =========================================================
+            ACT IV: REAL EVOVI-VN FLAGSHIP SHOWCASE & 9-PROJECT LEDGER
+           ========================================================= */}
+        <div data-chapter="3">
+          <FlagshipShowcaseStage onSelectProjectScope={handleSelectProjectScope} />
+        </div>
+
+        {/* =========================================================
+            ACT V: CONTINUOUS 6-STEP SPEC-DRIVEN ENGINEERING CONDUIT
+           ========================================================= */}
+        <section
+          id="process"
+          data-chapter="4"
+          className="bg-[#dfe6ef] py-20 text-[#0b1320] md:py-28"
+        >
+          <div className="container-evo">
+            <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-5">
+                <p className="max-w-[36ch] text-evo-body text-[#465468]">
+                  Mỗi chặng đều có đầu ra kiểm chứng được: rõ phạm vi, rõ thời gian và không phát sinh chi phí mập mờ.
+                </p>
+              </div>
+              <div className="lg:col-span-7">
+                <h2 className="font-display text-evo-h2 font-extrabold text-[#0b1320]">
+                  Sáu chặng triển khai rõ đầu ra
+                </h2>
+              </div>
+            </div>
+
+            <div className="mt-14 grid lg:grid-cols-12">
+              <div className="hidden lg:col-span-5 lg:block" />
+              <div data-process-track className="relative pl-8 lg:col-span-7">
+                {/* Continuous scrubbed signal spine */}
+                <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-[#b8c6d9]">
+                  <div
+                    data-process-conduit
+                    className="h-full w-full bg-[#095fd6] will-change-transform"
+                  />
+                </div>
+
+                {/* Open Editorial Ordered List (Zero repetitive white card boxes!) */}
+                <ol className="list-decimal space-y-8 pl-6 marker:font-display marker:text-evo-h3 marker:font-extrabold marker:text-[#095fd6]">
+                  {DELIVERY_STEPS.map((step) => (
+                    <li
+                      key={step.title}
+                      data-process-step
+                      className="py-2"
+                    >
+                      <h3 className="font-display text-evo-h3 font-bold text-[#0b1320]">
+                        {step.title}
+                      </h3>
+                      <p className="mt-2 max-w-[60ch] text-evo-body text-[#465468]">
+                        {step.detail}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
           </div>
-          <p className="mt-4 text-sm max-w-sm">Giải pháp phần mềm thiết kế riêng, giúp doanh nghiệp tăng trưởng bền vững bằng công nghệ.</p>
-        </div>
-        <div>
-          <h4 className="text-background font-semibold mb-4">Công ty</h4>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#" className="hover:text-background">Về Evovi</a></li>
-            <li><a href="#services" className="hover:text-background">Dịch vụ</a></li>
-            <li><a href="#cases" className="hover:text-background">Dự án</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-background font-semibold mb-4">Ứng dụng</h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="/ad-canvas" className="hover:text-background">Ad Canvas</a>
-            </li>
-            <li>
-              <a href="/ad-canvas/support" className="hover:text-background">Hỗ trợ Ad Canvas</a>
-            </li>
-            <li>
-              <a href="/privacy/ad-canvas" className="hover:text-background">Quyền riêng tư Ad Canvas</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-background font-semibold mb-4">Liên hệ</h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="mailto:kinhdoanh@evovi.vn" className="hover:text-background">kinhdoanh@evovi.vn</a>
-            </li>
-            <li>
-              Hotline 24/7:{" "}
-              <a href="tel:0868661235" className="hover:text-background">0868661235</a>
-            </li>
-            <li>Hà Nội · TP. HCM</li>
-          </ul>
-        </div>
-      </div>
-      <div className="container-x mt-10 pt-6 border-t border-background/10 text-xs flex flex-col md:flex-row justify-between gap-3">
-        <span>© {new Date().getFullYear()} Evovi. Bảo lưu mọi quyền.</span>
-      </div>
-    </footer>
-  );
-}
+        </section>
 
-function FloatingChat() {
-  return (
-    <a href="#contact" aria-label="Chat với Evovi"
-      className="fixed bottom-6 right-6 z-40 w-14 h-14 grid place-items-center rounded-full bg-primary-gradient text-white shadow-glow hover:scale-110 transition-transform">
-      <MessageCircle className="w-6 h-6" />
-    </a>
-  );
-}
+        {/* =========================================================
+            ACT VI: INVERTED CONSULTATION SCOPER & LEAD FORM (#070d18)
+           ========================================================= */}
+        <section
+          id="contact"
+          data-chapter="5"
+          className="relative overflow-hidden bg-[#070d18] py-20 text-[#f4f7fb] md:py-28"
+        >
+          <HorizonSignalCanvas />
 
-function LandingPage() {
-  return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main>
-        <Hero />
-        <PainPoints />
-        <Solution />
-        <Services />
-        <Process />
-        <CaseStudies />
-        <WhyEvovi />
-        <Testimonials />
-        <ContactCTA />
+          <div className="container-evo relative z-10">
+            <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
+              {/* Left 42%: Statement restated + Quick Scope Selector + Direct Contact */}
+              <div className="lg:col-span-5">
+                <h2 className="font-display text-evo-h2 font-extrabold text-[#f4f7fb]">
+                  Kể chỗ đang vướng của bạn.
+                </h2>
+                <p className="mt-4 max-w-[38ch] text-evo-body text-[#a6b4c8]">
+                  Bạn không cần chuẩn bị tài liệu kỹ thuật phức tạp. Trong buổi trao đổi đầu tiên, đội ngũ Evovi sẽ cùng bạn phác thảo luồng giải pháp và lộ trình ra bản chạy thử rõ ràng.
+                </p>
+
+                {/* Interactive Quick-Scope Chips */}
+                <div className="mt-8">
+                  <p className="text-evo-small font-semibold text-[#a6b4c8]">
+                    Chọn nhanh bài toán bạn đang quan tâm:
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {SCOPE_PRESETS.map((preset) => {
+                      const active = selectedPreset === preset;
+                      return (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => handleSelectProjectScope(preset)}
+                          className={`rounded-md px-3.5 py-2 text-left text-evo-small font-semibold transition-colors ${
+                            active
+                              ? "bg-[#f59422] text-[#070d18]"
+                              : "bg-[#0d1728] text-[#f4f7fb] hover:bg-[#142238]"
+                          }`}
+                        >
+                          {preset}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Direct studio contact coordinates */}
+                <div className="mt-10 space-y-3.5 bg-[#0d1728] p-6 text-evo-body">
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-4 w-4 shrink-0 text-[#f59422]" />
+                    <a
+                      href="mailto:kinhdoanh@evovi.vn"
+                      className="font-medium text-[#f4f7fb] hover:text-[#f59422]"
+                    >
+                      kinhdoanh@evovi.vn
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 shrink-0 text-[#3cb34a]" />
+                    <span>
+                      Hotline 24/7:{" "}
+                      <a
+                        href="tel:0868661235"
+                        className="font-semibold tabular-nums text-[#f4f7fb] hover:text-[#3cb34a]"
+                      >
+                        0868 661 235
+                      </a>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[#a6b4c8]">
+                    <MapPin className="h-4 w-4 shrink-0 text-[#2480ff]" />
+                    <span>Hà Nội · TP. Hồ Chí Minh</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right 58%: Consultation Form */}
+              <div className="lg:col-span-7">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSubmitted(true);
+                  }}
+                  className="rounded-lg bg-[#0d1728] p-6 md:p-8"
+                >
+                  {submitted ? (
+                    <div className="py-12 text-center">
+                      <CheckCircle2 className="mx-auto h-14 w-14 text-[#3cb34a]" />
+                      <h3 className="mt-4 font-display text-evo-h3 font-bold text-[#f4f7fb]">
+                        Đã tiếp nhận yêu cầu tư vấn
+                      </h3>
+                      <p className="mx-auto mt-2 max-w-[42ch] text-evo-body text-[#a6b4c8]">
+                        Cảm ơn bạn. Đội ngũ kỹ sư giải pháp của Evovi sẽ liên hệ sớm nhất trong giờ làm việc để hẹn lịch trao đổi chi tiết.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setSubmitted(false)}
+                        className="mt-6 rounded-md bg-[#142238] px-4 py-2.5 text-evo-small font-semibold text-[#f4f7fb] transition-colors hover:bg-[#095fd6]"
+                      >
+                        Gửi thêm yêu cầu khác
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="evo-name"
+                            className="mb-1.5 block text-evo-small font-semibold text-[#f4f7fb]"
+                          >
+                            Họ và tên
+                          </label>
+                          <input
+                            id="evo-name"
+                            required
+                            type="text"
+                            name="name"
+                            placeholder="Nguyễn Văn A"
+                            maxLength={255}
+                            className="w-full rounded-md bg-[#070d18] px-4 py-3 text-evo-body text-[#f4f7fb] placeholder:text-[#a6b4c8]/60 focus:ring-2 focus:ring-[#2480ff] focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="evo-company"
+                            className="mb-1.5 block text-evo-small font-semibold text-[#f4f7fb]"
+                          >
+                            Tên doanh nghiệp / tổ chức
+                          </label>
+                          <input
+                            id="evo-company"
+                            required
+                            type="text"
+                            name="company"
+                            placeholder="Công ty Cổ phần ABC"
+                            maxLength={255}
+                            className="w-full rounded-md bg-[#070d18] px-4 py-3 text-evo-body text-[#f4f7fb] placeholder:text-[#a6b4c8]/60 focus:ring-2 focus:ring-[#2480ff] focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="evo-email"
+                            className="mb-1.5 block text-evo-small font-semibold text-[#f4f7fb]"
+                          >
+                            Email công việc
+                          </label>
+                          <input
+                            id="evo-email"
+                            required
+                            type="email"
+                            name="email"
+                            placeholder="ban@doanhnghiep.vn"
+                            maxLength={255}
+                            className="w-full rounded-md bg-[#070d18] px-4 py-3 text-evo-body text-[#f4f7fb] placeholder:text-[#a6b4c8]/60 focus:ring-2 focus:ring-[#2480ff] focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="evo-phone"
+                            className="mb-1.5 block text-evo-small font-semibold text-[#f4f7fb]"
+                          >
+                            Số điện thoại liên hệ
+                          </label>
+                          <input
+                            id="evo-phone"
+                            required
+                            type="tel"
+                            name="phone"
+                            placeholder="0909 000 000"
+                            maxLength={30}
+                            className="w-full rounded-md bg-[#070d18] px-4 py-3 text-evo-body text-[#f4f7fb] placeholder:text-[#a6b4c8]/60 focus:ring-2 focus:ring-[#2480ff] focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="evo-role"
+                          className="mb-1.5 block text-evo-small font-semibold text-[#f4f7fb]"
+                        >
+                          Vai trò của bạn
+                        </label>
+                        <select
+                          id="evo-role"
+                          required
+                          name="role"
+                          defaultValue=""
+                          className="w-full rounded-md bg-[#070d18] px-4 py-3 text-evo-body text-[#f4f7fb] focus:ring-2 focus:ring-[#2480ff] focus:outline-none"
+                        >
+                          <option value="" disabled>
+                            Chọn vai trò công việc
+                          </option>
+                          <option value="ceo">CEO / Chủ doanh nghiệp / Founder</option>
+                          <option value="cto">CTO / Giám đốc Công nghệ</option>
+                          <option value="ops">Giám đốc Vận hành / Trưởng bộ phận</option>
+                          <option value="product">Quản lý Sản phẩm / Dự án</option>
+                          <option value="other">Vai trò khác</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="evo-need"
+                          className="mb-1.5 block text-evo-small font-semibold text-[#f4f7fb]"
+                        >
+                          Mô tả ngắn nhu cầu hoặc điểm nghẽn hiện tại
+                        </label>
+                        <textarea
+                          id="evo-need"
+                          required
+                          rows={4}
+                          name="need"
+                          value={needText}
+                          onChange={(e) => setNeedText(e.target.value)}
+                          maxLength={1200}
+                          placeholder="Ví dụ: cần quản lý tồn kho quảng cáo OOH, xây dựng LMS đào tạo nội bộ đa chi nhánh, hoặc làm app kỹ thuật viên hiện trường..."
+                          className="w-full resize-none rounded-md bg-[#070d18] px-4 py-3 text-evo-body text-[#f4f7fb] placeholder:text-[#a6b4c8]/60 focus:ring-2 focus:ring-[#2480ff] focus:outline-none"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#095fd6] px-6 py-4 text-evo-body font-semibold text-white transition-colors hover:bg-[#2480ff]"
+                      >
+                        Gửi thông tin để nhận lịch tư vấn 1-1 →
+                      </button>
+                    </div>
+                  )}
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
-      <Footer />
-      <FloatingChat />
+
+      {/* =========================================================
+          MONUMENTAL EDITORIAL FOOTER
+         ========================================================= */}
+      <footer className="overflow-hidden bg-[#040810] pt-16 pb-14 text-[#f4f7fb]">
+        <div className="container-evo">
+          <div className="grid gap-10 lg:grid-cols-12">
+            {/* Left 42%: Brand badge + direct high-scale links */}
+            <div className="lg:col-span-5">
+              <EvoviLogoIcon size="md" surface="tile" />
+              <p className="mt-4 max-w-[36ch] text-evo-body text-[#a6b4c8]">
+                Studio kỹ thuật phần mềm thiết kế riêng, nền tảng quản trị đa tenant và giải pháp AI vận hành thực chiến cho doanh nghiệp.
+              </p>
+              <div className="mt-6 space-y-1.5 font-display text-evo-h3 font-bold">
+                <div>
+                  <a
+                    href="mailto:kinhdoanh@evovi.vn"
+                    className="text-[#f59422] transition-colors hover:text-[#f4f7fb]"
+                  >
+                    kinhdoanh@evovi.vn
+                  </a>
+                </div>
+                <div>
+                  <a
+                    href="tel:0868661235"
+                    className="tabular-nums text-[#f4f7fb] transition-colors hover:text-[#2480ff]"
+                  >
+                    0868 661 235
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Right 58%: 3 clean columns of product & legal routes */}
+            <div className="grid gap-8 sm:grid-cols-3 lg:col-span-7">
+              <div>
+                <h3 className="font-display text-evo-body font-bold text-[#f4f7fb]">
+                  Điều hướng
+                </h3>
+                <ul className="mt-4 space-y-2.5 text-evo-small text-[#a6b4c8]">
+                  <li>
+                    <a href="#solution" className="hover:text-[#f59422]">
+                      Giải pháp chuyển đổi
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#services" className="hover:text-[#f59422]">
+                      Năng lực kỹ thuật
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#ecosystem" className="hover:text-[#f59422]">
+                      9 Hệ thống Evovi
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#process" className="hover:text-[#f59422]">
+                      Quy trình 6 bước
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-display text-evo-body font-bold text-[#f4f7fb]">
+                  Sản phẩm công khai
+                </h3>
+                <ul className="mt-4 space-y-2.5 text-evo-small text-[#a6b4c8]">
+                  <li>
+                    <Link
+                      to="/ad-canvas"
+                      className="text-[#f4f7fb] hover:text-[#f59422]"
+                    >
+                      Ad Canvas OOH ↗
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/ad-canvas/support"
+                      className="hover:text-[#f59422]"
+                    >
+                      Trung tâm hỗ trợ Ad Canvas
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/privacy/ad-canvas"
+                      className="hover:text-[#f59422]"
+                    >
+                      Quyền riêng tư Ad Canvas
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/privacy/elevator-360"
+                      className="hover:text-[#f59422]"
+                    >
+                      Quyền riêng tư Elevator360
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="lg:text-right">
+                <h3 className="font-display text-evo-body font-bold text-[#f4f7fb]">
+                  Hiện diện
+                </h3>
+                <ul className="mt-4 space-y-2.5 text-evo-small text-[#a6b4c8]">
+                  <li className="text-[#f4f7fb]">Hà Nội · Việt Nam</li>
+                  <li className="text-[#f4f7fb]">TP. Hồ Chí Minh · Việt Nam</li>
+                  <li>Hỗ trợ kỹ thuật: support@evovi.vn</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Closing Monumental Wordmark at Bottom */}
+          <div
+            aria-hidden="true"
+            className="mt-12 select-none font-display text-[clamp(4.5rem,17vw,14.5rem)] font-extrabold leading-[0.84] tracking-[-0.05em] text-[#5b7396]"
+          >
+            EVOVI
+          </div>
+
+          <div className="mt-8 flex flex-col justify-between gap-3 text-evo-small text-[#a6b4c8] sm:flex-row">
+            <span>© {new Date().getFullYear()} Evovi. Bảo lưu mọi quyền.</span>
+            <a href="#top" className="font-semibold text-[#f4f7fb] hover:text-[#f59422]">
+              Về đầu trang ↑
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

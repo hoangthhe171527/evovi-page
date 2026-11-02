@@ -4,27 +4,41 @@ import {
   PrivacyPolicyLayout,
 } from "@/components/privacy/privacy-policy-layout";
 import { adCanvasPrivacyPolicy } from "@/data/privacy/ad-canvas";
-
-const PRIVACY_FONTS = [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap",
-  },
-] as const;
+import { AD_CANVAS_OG_IMAGE, buildSeoHead, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy/ad-canvas")({
-  head: () => ({
-    meta: [
-      { title: adCanvasPrivacyPolicy.metaTitle },
-      {
-        name: "description",
-        content: adCanvasPrivacyPolicy.metaDescription,
-      },
-    ],
-    links: [...PRIVACY_FONTS],
-  }),
+  head: () =>
+    buildSeoHead({
+      title: `${adCanvasPrivacyPolicy.metaTitle} | Evovi`,
+      description: adCanvasPrivacyPolicy.metaDescription,
+      path: "/privacy/ad-canvas",
+      ogImage: AD_CANVAS_OG_IMAGE,
+      ogType: "article",
+      jsonLd: [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: adCanvasPrivacyPolicy.metaTitle,
+          description: adCanvasPrivacyPolicy.metaDescription,
+          url: `${SITE_URL}/privacy/ad-canvas`,
+          inLanguage: "vi-VN",
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Evovi", item: `${SITE_URL}/` },
+            { "@type": "ListItem", position: 2, name: "Ad Canvas", item: `${SITE_URL}/ad-canvas` },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: "Chính sách quyền riêng tư",
+              item: `${SITE_URL}/privacy/ad-canvas`,
+            },
+          ],
+        },
+      ],
+    }),
   component: AdCanvasPrivacyPolicyPage,
 });
 

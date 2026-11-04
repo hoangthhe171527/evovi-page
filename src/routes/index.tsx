@@ -50,10 +50,10 @@ export const Route = createFileRoute("/")({
 });
 
 const SCOPE_PRESETS = [
-  "Hệ thống ERP / CRM vận hành thiết kế riêng",
-  "Nền tảng LMS đào tạo nội bộ & quản trị năng lực",
-  "Hệ thống OOH / Đội xe / App kỹ thuật hiện trường",
-  "Số hóa học liệu EdTech & Tác nhân AI doanh nghiệp",
+  "Phần mềm quản trị vận hành doanh nghiệp",
+  "Ứng dụng di động cho khách hàng & nhân sự",
+  "Nền tảng đào tạo & quản trị nhân sự",
+  "Tích hợp trợ lý AI & tự động hóa",
 ] as const;
 
 const PERSONAL_EMAIL_DOMAINS = new Set([
@@ -65,35 +65,34 @@ const PERSONAL_EMAIL_DOMAINS = new Set([
 ]);
 
 const RIBBON_ITEMS_A = [
-  "Ad Canvas OOH",
-  "Evo AdTracker",
-  "Elevator360 ERP",
-  "Evo Books Để Học Tốt",
-  "Sách Bài Tập Số NXBGD",
+  "Phần mềm Thiết kế riêng",
+  "Web & Mobile Doanh nghiệp",
+  "Kiến trúc Bền vững",
+  "Bảo mật Đa tầng",
+  "Đồng hành Kỹ thuật 24/7",
 ];
 
 const RIBBON_ITEMS_B = [
-  "Evo Books Studio",
-  "Evo AI Service",
-  "Enterprise & Public LMS",
-  "EvoHub Agent-Ready",
-  "Evo Chief of Staff",
+  "Tư vấn Chuyển đổi số",
+  "Ứng dụng Hiện trường",
+  "Trợ lý AI Doanh nghiệp",
+  "Hạ tầng Cloud Tự động",
+  "Đội ngũ Kỹ sư Thực chiến",
 ];
 
 const MANIFESTO_PHRASES = [
-  "Phần mềm tốt không bắt doanh nghiệp sửa mình theo khuôn mẫu đóng gói.",
-  "Tại Evovi, mọi dòng mã đều bắt đầu từ đặc tả nghiệp vụ sống (Spec-Driven),",
-  "vận hành mượt từ bàn điều hành đến nhân sự ngoài hiện trường sóng yếu,",
-  "và sẵn sàng để con người cùng AI mở rộng quy mô gấp mười lần.",
+  "Phần mềm tốt phải khớp theo doanh nghiệp,",
+  "chạy mượt từ bàn điều hành ra hiện trường,",
+  "và sẵn sàng mở rộng cùng AI.",
 ];
 
 const CHAPTER_LABELS = [
-  "Khởi nguồn",
-  "Chuyển đổi hệ thống",
-  "Năng lực kỹ thuật",
-  "Hệ sinh thái Evovi",
-  "Quy trình sáu chặng",
-  "Tư vấn triển khai",
+  "Về Evovi",
+  "Giá trị cốt lõi",
+  "Năng lực công ty",
+  "Lĩnh vực đồng hành",
+  "Quy trình hợp tác",
+  "Liên hệ hợp tác",
 ] as const;
 
 type FormFields = {
@@ -589,10 +588,10 @@ function EvoviLandingPage() {
   }, []);
 
   const navItems = [
-    { href: "#solution", label: "Chuyển đổi", chapter: 1 },
+    { href: "#top", label: "Về Evovi", chapter: 0 },
+    { href: "#solution", label: "Giá trị", chapter: 1 },
     { href: "#services", label: "Năng lực", chapter: 2 },
-    { href: "#cases", label: "Tiêu biểu", chapter: 3 },
-    { href: "#ecosystem", label: "9 Dự án Evovi", chapter: 3 },
+    { href: "#domains", label: "Lĩnh vực", chapter: 3 },
     { href: "#process", label: "Quy trình", chapter: 4 },
   ];
 
@@ -618,8 +617,7 @@ function EvoviLandingPage() {
             className="hidden items-center gap-1.5 text-evo-small font-medium lg:flex"
           >
             {navItems.map((item) => {
-              const isCurrent =
-                activeChapter === item.chapter && item.href !== "#ecosystem";
+              const isCurrent = activeChapter === item.chapter;
               return (
                 <a
                   key={item.href}
@@ -712,12 +710,12 @@ function EvoviLandingPage() {
                   className="evo-surface-card inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-evo-small font-medium text-[#f5f8ff]"
                 >
                   <span className="h-2 w-2 rounded-full bg-[#6ee7b7]" />
-                  Evovi Engineering · Hà Nội & TP. Hồ Chí Minh
+                  Evovi · Hà Nội & TP. Hồ Chí Minh
                 </span>
               </div>
               <div className="hidden lg:col-span-7 lg:block lg:text-right" data-hero-fade>
                 <p className="text-evo-small font-medium text-[#9eb2d0]">
-                  Kiến trúc Spec-Driven · SaaS đa tổ chức · Ứng dụng hiện trường · Tác nhân AI
+                  Web quản trị · Ứng dụng di động · ERP & LMS · Tác nhân AI
                 </p>
               </div>
             </div>
@@ -728,8 +726,8 @@ function EvoviLandingPage() {
             <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
               {/* Left of 42% axis: Lead Subtext + 2:1 Primary & Ghost Secondary CTA Row */}
               <div className="order-2 lg:order-1 lg:col-span-5" data-hero-fade>
-                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Evovi thiết kế và xây dựng phần mềm khớp trọn vẹn quy trình doanh nghiệp bạn vận hành, từ cổng quản trị Web đến ứng dụng hiện trường và tác nhân AI.
+                <p className="max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                  Thiết kế và xây dựng phần mềm khớp đúng quy trình doanh nghiệp: Web quản trị, App hiện trường và AI.
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
@@ -737,8 +735,8 @@ function EvoviLandingPage() {
                     <span>Nhận tư vấn giải pháp</span>
                     <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
                   </a>
-                  <a href="#ecosystem" className="evo-btn-ghost evo-btn-lg">
-                    <span>Xem 9 hệ thống thực tế</span>
+                  <a href="#solution" className="evo-btn-ghost evo-btn-lg">
+                    <span>Tìm hiểu về Evovi</span>
                   </a>
                 </div>
               </div>
@@ -766,18 +764,18 @@ function EvoviLandingPage() {
                 >
                   <div>
                     <div className="font-display text-evo-h3 font-bold text-[#f5f8ff] tabular-nums">
-                      9 hệ thống
+                      May đo 100%
                     </div>
                     <div className="mt-1 text-evo-small text-[#9eb2d0]">
-                      Đang chạy thực tế
+                      Khớp đúng quy trình
                     </div>
                   </div>
                   <div>
                     <div className="font-display text-evo-h3 font-bold text-[#5ca4ff] tabular-nums">
-                      39 kho mã
+                      Web · App · AI
                     </div>
                     <div className="mt-1 text-evo-small text-[#9eb2d0]">
-                      Web, Mobile & AI
+                      Đồng bộ một nền tảng
                     </div>
                   </div>
                   <div>
@@ -799,11 +797,11 @@ function EvoviLandingPage() {
                   <div data-handoff-beam className="h-full w-full bg-[#247eff]" />
                 </div>
                 <span className="text-evo-small font-medium text-[#9eb2d0]">
-                  Cuộn xuống để theo dõi mạch kiến trúc liên thông
+                  Cuộn xuống để xem giải pháp
                 </span>
               </div>
               <span className="text-evo-small font-medium text-[#9eb2d0]">
-                Evovi · Spec-Driven Enterprise Engineering
+                Evovi Engineering
               </span>
             </div>
           </div>
@@ -821,8 +819,8 @@ function EvoviLandingPage() {
             {/* Pillar 2 & 3: H2 leads on mobile, 16px mobile proximity */}
             <div className="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-8">
               <div className="order-2 lg:order-1 lg:col-span-5" data-section-sub>
-                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Đa số doanh nghiệp chậm lại không phải vì đội ngũ thiếu nỗ lực, mà vì công cụ hiện tại rời rạc so với tốc độ phát triển thực tế.
+                <p className="max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                  Thay thế bảng tính rời rạc và phần mềm đóng gói bằng một hệ thống đồng bộ.
                 </p>
               </div>
               <div className="order-1 lg:order-2 lg:col-span-7">
@@ -845,7 +843,7 @@ function EvoviLandingPage() {
                   />
                 </div>
 
-                <div className="space-y-3" role="tablist" aria-label="Điểm nghẽn vận hành">
+                <div className="space-y-2.5" role="tablist" aria-label="Điểm nghẽn vận hành">
                   {TRANSFORMATION_BEATS.map((beat, idx) => {
                     const active = idx === activeBeatIndex;
                     return (
@@ -859,7 +857,7 @@ function EvoviLandingPage() {
                         onClick={() => setActiveBeatIndex(idx)}
                         className={`group block w-full cursor-pointer rounded-xl text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5ca4ff] ${
                           active
-                            ? "evo-surface-card p-5 md:p-6"
+                            ? "evo-surface-card p-5"
                             : "bg-transparent px-4 py-3.5 hover:bg-[#0d1b33]/55"
                         }`}
                       >
@@ -877,12 +875,8 @@ function EvoviLandingPage() {
                           />
                         </div>
 
-                        <p className="mt-2 text-evo-body text-[#d6e2f5]">
-                          {beat.painDesc}
-                        </p>
-
                         {/* Anti-Spreadsheet Relational Flow Outcome */}
-                        <div className="mt-3 flex flex-wrap items-center gap-2 text-evo-small font-semibold tabular-nums">
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-evo-small font-semibold tabular-nums">
                           <span className="text-[#fcd34d]">{beat.metricBefore}</span>
                           <ArrowRight className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden="true" />
                           <span className="text-[#6ee7b7]">{beat.metricAfter}</span>
@@ -917,7 +911,7 @@ function EvoviLandingPage() {
             <div data-manifesto-block className="grid gap-6 lg:grid-cols-12 lg:gap-8">
               <div className="lg:col-span-5" data-section-sub>
                 <p className="max-w-[36ch] text-evo-body text-[#d6e2f5]">
-                  Phương pháp luận kỹ thuật Spec-Driven thống nhất đứng sau toàn bộ sản phẩm của Evovi.
+                  Nguyên tắc phát triển sản phẩm tại Evovi.
                 </p>
               </div>
               <div className="lg:col-span-7">
@@ -940,15 +934,15 @@ function EvoviLandingPage() {
               {/* Cell 1: Studio Architecture Photograph with Progressive Blur Caption (7 cols) */}
               <div
                 data-mosaic-cell
-                className="min-h-[280px] overflow-hidden rounded-lg lg:col-span-7"
+                className="min-h-[260px] overflow-hidden rounded-lg lg:col-span-7"
               >
                 <EditorialPhotoFrame
                   src={studioBlueprintImg}
                   alt="Bàn thiết kế kiến trúc mô-đun phần mềm tại studio kỹ thuật Evovi"
                   width={1440}
                   height={810}
-                  tag="Studio Kỹ thuật Spec-Driven"
-                  caption="Chuẩn hóa sơ đồ luồng nghiệp vụ và phân quyền trước khi viết mã"
+                  tag="Thiết kế theo quy trình thật"
+                  caption="Thống nhất luồng nghiệp vụ và phân quyền trước khi lập trình"
                   aspectClassName="aspect-[16/10]"
                   imgDataAttr="mosaic"
                 />
@@ -957,54 +951,54 @@ function EvoviLandingPage() {
               {/* Cell 2: Brand-Tinted Dark Surface instead of glaring solid blue block (5 cols) */}
               <div
                 data-mosaic-cell
-                className="evo-mosaic-brand flex flex-col justify-between rounded-lg p-8 text-[#f5f8ff] md:p-10 lg:col-span-5"
+                className="evo-mosaic-brand flex flex-col justify-between rounded-lg p-7 text-[#f5f8ff] md:p-9 lg:col-span-5"
               >
                 <div>
                   <span className="evo-chip-info text-evo-small font-semibold">
-                    Cam kết chuẩn đầu vào
+                    Chuẩn đầu vào
                   </span>
                   <div className="mt-4 font-display text-evo-hero font-bold text-[#93c5fd] tabular-nums">
                     100%
                   </div>
                 </div>
-                <p className="mt-8 max-w-[36ch] text-evo-body text-[#d6e2f5]">
-                  Dự án khởi đầu bằng tài liệu đặc tả nghiệp vụ sống và ma trận phân quyền rõ ràng để đội vận hành và kỹ sư nói chung một ngôn ngữ.
+                <p className="mt-6 max-w-[34ch] text-evo-body text-[#d6e2f5]">
+                  Rõ quy trình, rõ màn hình và ma trận phân quyền ngay từ đầu.
                 </p>
               </div>
 
               {/* Cell 3: Elevated Slate-Navy Block (5 cols) */}
               <div
                 data-mosaic-cell
-                className="evo-surface-card flex flex-col justify-between rounded-lg p-8 text-[#f5f8ff] md:p-10 lg:col-span-5"
+                className="evo-surface-card flex flex-col justify-between rounded-lg p-7 text-[#f5f8ff] md:p-9 lg:col-span-5"
               >
                 <div className="font-display text-evo-h2 font-bold text-[#5ca4ff]">
                   Web · App · AI
                 </div>
-                <p className="mt-8 max-w-[36ch] text-evo-body text-[#d6e2f5]">
-                  Đồng nhất từ cổng điều hành React 19, ứng dụng hiện trường Flutter và Expo tới dịch vụ AI FastAPI có kiểm duyệt an toàn.
+                <p className="mt-6 max-w-[34ch] text-evo-body text-[#d6e2f5]">
+                  Đồng bộ cổng điều hành Web, ứng dụng di động và dịch vụ AI an toàn.
                 </p>
               </div>
 
               {/* Cell 4: Deep Steel-Navy Block (7 cols) */}
               <div
                 data-mosaic-cell
-                className="evo-surface-card flex flex-col justify-between rounded-lg bg-[#10213d] p-8 text-[#f5f8ff] md:p-10 lg:col-span-7"
+                className="evo-surface-card flex flex-col justify-between rounded-lg bg-[#10213d] p-7 text-[#f5f8ff] md:p-9 lg:col-span-7"
               >
-                <div className="grid gap-8 sm:grid-cols-2">
+                <div className="grid gap-6 sm:grid-cols-2">
                   <div>
                     <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
-                      Ra bản chạy thật sớm
+                      Ra bản chạy sớm
                     </h3>
-                    <p className="mt-2.5 text-evo-body text-[#d6e2f5]">
-                      Chia lộ trình theo từng phân hệ cốt lõi để đội ngũ trải nghiệm sớm, đo hiệu quả ngay trên công việc hằng ngày.
+                    <p className="mt-2 text-evo-body text-[#d6e2f5]">
+                      Bàn giao theo từng phân hệ cốt lõi để đội ngũ dùng thử ngay.
                     </p>
                   </div>
                   <div>
                     <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
-                      Hạ tầng tự động hóa IaC
+                      Hạ tầng tự động
                     </h3>
-                    <p className="mt-2.5 text-evo-body text-[#d6e2f5]">
-                      Triển khai chuẩn Terraform, Docker, sao lưu định kỳ và cô lập dữ liệu từng tổ chức khách hàng.
+                    <p className="mt-2 text-evo-body text-[#d6e2f5]">
+                      Triển khai Cloud an toàn, sao lưu định kỳ và cô lập dữ liệu.
                     </p>
                   </div>
                 </div>
@@ -1020,18 +1014,18 @@ function EvoviLandingPage() {
                 >
                   Đồng hành trọn vòng đời hệ thống
                 </h2>
-                <p className="mt-4 max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Chọn từng năng lực để xem gói sản phẩm bàn giao kỹ thuật cụ thể mà đội ngũ Evovi thiết lập cho doanh nghiệp.
+                <p className="mt-3 max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                  Chọn từng năng lực để xem gói bàn giao cụ thể.
                 </p>
 
-                <div className="mt-8 overflow-hidden rounded-xl bg-[#081224]">
+                <div className="mt-7 overflow-hidden rounded-xl bg-[#081224]">
                   <EditorialPhotoFrame
                     src={factoryOpsImg}
                     alt="Kỹ sư điều hành giám sát hệ thống vận hành số hóa trên máy tính bảng tại doanh nghiệp"
                     width={1080}
                     height={1440}
                     tag="Triển khai đa thiết bị"
-                    caption="Vận hành ổn định từ phòng điều hành trung tâm tới hiện trường"
+                    caption="Vận hành ổn định từ bàn điều hành tới hiện trường"
                     aspectClassName="aspect-[4/3]"
                     imgDataAttr="cap"
                   />
@@ -1039,7 +1033,7 @@ function EvoviLandingPage() {
               </div>
 
               <div
-                className="space-y-3 lg:col-span-7"
+                className="space-y-2.5 lg:col-span-7"
                 role="tablist"
                 aria-label="Sáu năng lực kỹ thuật cốt lõi"
               >
@@ -1058,8 +1052,8 @@ function EvoviLandingPage() {
                       onClick={() => setActiveCapabilityIdx(idx)}
                       className={`group block w-full cursor-pointer rounded-r-xl border-l-4 text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5ca4ff] ${
                         isSelected
-                          ? "evo-surface-card border-l-[#247eff] p-6 text-[#f5f8ff] md:p-7"
-                          : "border-l-[#132747] bg-transparent py-4 pr-4 pl-6 text-[#f5f8ff] hover:border-l-[#5ca4ff] hover:bg-[#0d1b33]/40"
+                          ? "evo-surface-card border-l-[#247eff] p-5 text-[#f5f8ff] md:p-6"
+                          : "border-l-[#132747] bg-transparent py-3.5 pr-4 pl-5 text-[#f5f8ff] hover:border-l-[#5ca4ff] hover:bg-[#0d1b33]/40"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-4">
@@ -1076,12 +1070,14 @@ function EvoviLandingPage() {
                         />
                       </div>
 
-                      <p className="mt-2 max-w-[60ch] text-evo-body text-[#d6e2f5]">
-                        {cap.summary}
-                      </p>
+                      {isSelected && (
+                        <p className="mt-2 max-w-[54ch] text-evo-body text-[#d6e2f5]">
+                          {cap.summary}
+                        </p>
+                      )}
 
-                      {/* Pillar 2: Discrete Tonal Deliverable Chips instead of raw "Bàn giao: X · Y · Z" string */}
-                      <div className="mt-4 flex flex-wrap gap-2">
+                      {/* Pillar 2: Discrete Tonal Deliverable Chips */}
+                      <div className="mt-3 flex flex-wrap gap-2">
                         {artifacts.map((artifact) => (
                           <span
                             key={artifact}
@@ -1158,8 +1154,8 @@ function EvoviLandingPage() {
             {/* Pillar 2 & 3: H2 leads first on Mobile, 16px mobile proximity */}
             <div className="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-8">
               <div className="order-2 lg:order-1 lg:col-span-5" data-section-sub>
-                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Mỗi chặng đều có đầu ra kiểm chứng được: rõ phạm vi, rõ thời gian và không phát sinh chi phí mập mờ.
+                <p className="max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                  Rõ phạm vi, rõ thời gian và bàn giao kiểm chứng được ở từng chặng.
                 </p>
               </div>
               <div className="order-1 lg:order-2 lg:col-span-7">
@@ -1167,12 +1163,12 @@ function EvoviLandingPage() {
                   data-section-heading
                   className="font-display text-evo-h2 font-bold text-[#f5f8ff]"
                 >
-                  Sáu chặng triển khai rõ đầu ra
+                  Bốn bước hợp tác rõ ràng
                 </h2>
               </div>
             </div>
 
-            <div className="mt-12 grid md:mt-14 lg:grid-cols-12">
+            <div className="mt-10 grid md:mt-12 lg:grid-cols-12">
               <div className="hidden lg:col-span-5 lg:block" />
               <div data-process-track className="relative pl-8 lg:col-span-7">
                 <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-[#132747]">
@@ -1182,17 +1178,17 @@ function EvoviLandingPage() {
                   />
                 </div>
 
-                <ol className="list-decimal space-y-8 pl-6 marker:font-display marker:text-evo-h3 marker:font-bold marker:text-[#5ca4ff]">
+                <ol className="list-decimal space-y-6 pl-6 marker:font-display marker:text-evo-h3 marker:font-bold marker:text-[#5ca4ff]">
                   {DELIVERY_STEPS.map((step) => (
                     <li
                       key={step.title}
                       data-process-step
-                      className="py-2"
+                      className="py-1"
                     >
                       <h3 className="font-display text-evo-h3 font-semibold text-[#f5f8ff]">
                         {step.title}
                       </h3>
-                      <p className="mt-2 max-w-[60ch] text-evo-body text-[#d6e2f5]">
+                      <p className="mt-1 max-w-[54ch] text-evo-body text-[#d6e2f5]">
                         {step.detail}
                       </p>
                     </li>
@@ -1223,14 +1219,14 @@ function EvoviLandingPage() {
                 >
                   Kể bài toán bạn cần giải quyết.
                 </h2>
-                <p className="mt-4 max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Bạn không cần chuẩn bị tài liệu kỹ thuật phức tạp. Trong buổi làm việc đầu tiên, đội ngũ kỹ sư giải pháp Evovi sẽ cùng bạn phác thảo kiến trúc và lộ trình ra bản chạy thử rõ ràng.
+                <p className="mt-3 max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                  Chỉ cần nêu nhu cầu hiện tại, kỹ sư Evovi sẽ cùng bạn phác thảo giải pháp và lộ trình rõ ràng.
                 </p>
 
                 {/* Interactive Quick-Scope Chips (Appends safely + Outcome Toast) */}
-                <div className="mt-8">
+                <div className="mt-7">
                   <p className="text-evo-small font-semibold text-[#9eb2d0]">
-                    Chọn nhanh phạm vi để điền sẵn vào biểu mẫu:
+                    Chọn nhanh nhu cầu:
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {SCOPE_PRESETS.map((preset) => {
@@ -1610,8 +1606,8 @@ function EvoviLandingPage() {
             {/* Left 42%: Brand badge + copyable contact coordinates */}
             <div className="lg:col-span-5">
               <EvoviLogoIcon size="md" />
-              <p className="mt-4 max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                Studio kỹ thuật phần mềm thiết kế riêng, nền tảng quản trị đa tổ chức và giải pháp AI vận hành thực chiến cho doanh nghiệp.
+              <p className="mt-4 max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                Thiết kế và phát triển phần mềm Web, Mobile, ERP/LMS và AI cho doanh nghiệp.
               </p>
               <div className="mt-6 space-y-3 text-evo-body">
                 <CopyContactChip
@@ -1633,27 +1629,27 @@ function EvoviLandingPage() {
             <div className="grid gap-8 sm:grid-cols-3 lg:col-span-7">
               <div>
                 <h3 className="font-display text-evo-body font-semibold text-[#f5f8ff]">
-                  Điều hướng
+                  Về Evovi
                 </h3>
                 <ul className="mt-4 space-y-2.5 text-evo-small text-[#9eb2d0]">
                   <li>
                     <a href="#solution" className="hover:text-[#f5f8ff]">
-                      Giải pháp chuyển đổi
+                      Giá trị cốt lõi
                     </a>
                   </li>
                   <li>
                     <a href="#services" className="hover:text-[#f5f8ff]">
-                      Năng lực kỹ thuật
+                      Năng lực công ty
                     </a>
                   </li>
                   <li>
-                    <a href="#ecosystem" className="hover:text-[#f5f8ff]">
-                      9 Hệ thống Evovi
+                    <a href="#domains" className="hover:text-[#f5f8ff]">
+                      Lĩnh vực đồng hành
                     </a>
                   </li>
                   <li>
                     <a href="#process" className="hover:text-[#f5f8ff]">
-                      Quy trình 6 bước
+                      Quy trình hợp tác
                     </a>
                   </li>
                 </ul>
@@ -1721,12 +1717,12 @@ function EvoviLandingPage() {
 
           <div
             aria-hidden="true"
-            className="mt-12 select-none font-display text-[clamp(4.5rem,17vw,14.5rem)] font-bold leading-[0.86] tracking-[-0.04em] text-[#607ba3]"
+            className="mt-8 select-none font-display text-evo-h3 font-bold tracking-[0.12em] text-[#3d557a]"
           >
             EVOVI
           </div>
 
-          <div className="mt-8 flex flex-col justify-between gap-3 text-evo-small text-[#9eb2d0] sm:flex-row">
+          <div className="mt-4 flex flex-col justify-between gap-3 text-evo-small text-[#9eb2d0] sm:flex-row">
             <span>© {new Date().getFullYear()} Evovi. Bảo lưu mọi quyền.</span>
             <a href="#top" className="font-semibold text-[#f5f8ff] hover:text-[#5ca4ff]">
               Về đầu trang ↑

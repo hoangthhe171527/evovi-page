@@ -143,8 +143,8 @@ function AdCanvasMarketingPage() {
           <div className="container-evo relative z-10">
             <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
               <div className="order-2 lg:order-1 lg:col-span-5" data-ac-hero>
-                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Ad Canvas dành cho doanh nghiệp khai thác quảng cáo ngoài trời trên xe buýt, taxi, pano và màn hình trung tâm thương mại. Từ cơ hội bán hàng, hợp đồng, lịch đặt chỗ đến ảnh nghiệm thu hiện trường đều đồng bộ tức thời.
+                <p className="max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                  Quản lý vị trí quảng cáo xe buýt, taxi, pano và màn hình LED: đồng bộ từ báo giá, hợp đồng đến ảnh nghiệm thu hiện trường.
                 </p>
                 <div className="mt-7 flex flex-wrap gap-3">
                   <Link
@@ -197,8 +197,8 @@ function AdCanvasMarketingPage() {
             {/* Pillar 2 & 3: H2 leads first on Mobile, 16px mobile proximity */}
             <div className="grid gap-4 lg:grid-cols-12 lg:items-end lg:gap-8">
               <div className="order-2 lg:order-1 lg:col-span-5">
-                <p className="max-w-[38ch] text-evo-body text-[#d6e2f5]">
-                  Giải quyết trọn vẹn bài toán thuê vị trí dài hạn rồi chia kỳ hạn bán lại cho nhiều nhãn hàng mà không trùng lịch hay thất thoát tồn kho.
+                <p className="max-w-[36ch] text-evo-body text-[#d6e2f5]">
+                  Chia kỳ hạn bán lại vị trí cho nhiều nhãn hàng mà không trùng lịch hay bỏ trống tồn kho.
                 </p>
               </div>
               <div className="order-1 lg:order-2 lg:col-span-7">

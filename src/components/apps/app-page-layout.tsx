@@ -134,12 +134,12 @@ export function AppPageLayout({
 
           <div
             aria-hidden="true"
-            className="mt-10 select-none font-display text-[clamp(3.8rem,13vw,11rem)] font-bold leading-[0.88] tracking-[-0.04em] text-[#607ba3]"
+            className="mt-8 select-none font-display text-evo-h2 font-bold tracking-[0.08em] text-[#4a648c]"
           >
             AD CANVAS
           </div>
 
-          <div className="mt-6 flex flex-col justify-between gap-2 text-evo-small text-[#9eb2d0] sm:flex-row">
+          <div className="mt-4 flex flex-col justify-between gap-2 text-evo-small text-[#9eb2d0] sm:flex-row">
             <span>© {new Date().getFullYear()} {adCanvasApp.developer}. Bảo lưu mọi quyền.</span>
             <span>{adCanvasApp.packageId}</span>
           </div>

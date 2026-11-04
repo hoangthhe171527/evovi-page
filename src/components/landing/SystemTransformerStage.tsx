@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { TRANSFORMATION_BEATS } from "@/data/evovi-projects";
 
 const BEAT_NAMES = [
@@ -249,19 +248,6 @@ export function SystemTransformerStage({
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Pillar 2: Anti-Spreadsheet Relational Flow Outcome Bar */}
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-[#081224] px-4 py-3 text-evo-small">
-        <span className="inline-flex items-center gap-2 text-[#9eb2d0]">
-          <span className="h-2 w-2 shrink-0 rounded-full bg-[#fcd34d]" />
-          <span className="tabular-nums">{beat.metricBefore}</span>
-        </span>
-        <span className="inline-flex items-center gap-2 font-semibold text-[#6ee7b7]">
-          <ArrowRight className="h-4 w-4 shrink-0 text-[#5ca4ff]" aria-hidden="true" />
-          <span className="h-2 w-2 shrink-0 rounded-full bg-[#6ee7b7]" />
-          <span className="tabular-nums">{beat.metricAfter}</span>
-        </span>
       </div>
     </div>
   );
